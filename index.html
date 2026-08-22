@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Underhearth — Mine for your soul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dirt:#5a3d24; --stone:#4a4238; --amber:#f0a83c; --crystal:#7dd8ff;
+    --volcanic:#ff5a3c; --bg:#0a0603; --text:#f3e9dc; --text-dim:#b8a58f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Rubik',system-ui,sans-serif; line-height:1.6; overflow-x:hidden;
+    cursor:default;
+  }
+  .conteneur{max-width:1000px;margin:0 auto;padding:0 28px}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  ::selection{background:var(--amber);color:#2a1a05}
+
+  .pixel{
+    font-family:'Press Start 2P',monospace; line-height:1.5;
+  }
+  .titre-jeu{
+    font-size:clamp(26px,6vw,54px); color:#fff;
+    -webkit-text-stroke:3px #241005;
+    text-shadow:
+      3px 3px 0 #241005, -3px 3px 0 #241005, 3px -3px 0 #241005, -3px -3px 0 #241005,
+      0 8px 0 rgba(0,0,0,.5), 0 0 40px rgba(240,168,60,.5);
+    letter-spacing:.02em;
+  }
+
+  /* --- Rail de profondeur : navigation en forme de coupe de mine --- */
+  .rail{
+    position:fixed;top:0;left:0;bottom:0;width:64px;z-index:100;
+    background:linear-gradient(180deg,#1a1008,#0a0603);
+    border-right:2px solid rgba(240,168,60,.25);
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:20px 0;
+  }
+  .rail .logo-mini{width:34px;opacity:.9}
+  .rail .jauge{position:relative;flex:1;width:6px;background:rgba(255,255,255,.08);border-radius:3px;margin:20px 0}
+  .rail .jauge-remplie{
+    position:absolute;bottom:0;left:0;width:100%;border-radius:3px;
+    background:linear-gradient(180deg, var(--amber), var(--volcanic));height:0%;
+    transition:height .1s linear;
+  }
+  .rail .arrets{position:absolute;inset:0}
+  .rail .arret{
+    position:absolute;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;
+    border-radius:50%;background:#241005;border:2px solid rgba(240,168,60,.4);cursor:pointer;
+    transition:border-color .2s, background .2s;
+  }
+  .rail .arret.actif{background:var(--amber);border-color:#fff;box-shadow:0 0 12px var(--amber)}
+  .rail .profondeur{
+    font-family:'Press Start 2P',monospace;font-size:9px;color:var(--amber);
+    writing-mode:vertical-rl;letter-spacing:.1em;
+  }
+  @media (max-width:720px){ .rail{width:40px} .rail .logo-mini{width:24px} }
+
+  main{margin-left:64px}
+  @media (max-width:720px){ main{margin-left:40px} }
+
+  /* --- Hero --- */
+  .hero{
+    position:relative;min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;overflow:hidden;
+    background:url('assets/bg_mine.jpg') center/cover;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 46%, rgba(5,3,1,.72) 0%, rgba(5,3,1,.4) 55%, rgba(5,3,1,.2) 75%),
+      linear-gradient(180deg, rgba(10,6,3,.75) 0%, rgba(10,6,3,.45) 32%, rgba(10,6,3,.55) 68%, var(--bg) 100%);
+  }
+  .hero-contenu{
+    position:relative;z-index:2;padding:38px 32px;max-width:640px;
+    background:rgba(6,4,2,.42);border-radius:14px;backdrop-filter:blur(3px);
+  }
+  .hero .sous-titre{
+    font-family:'Press Start 2P',monospace;font-size:clamp(9px,1.6vw,13px);
+    letter-spacing:.25em;text-transform:uppercase;color:var(--crystal);margin:22px 0 20px;
+    text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 18px rgba(125,216,255,.35);
+  }
+  .hero p.pitch{
+    color:#fff;font-size:17px;margin-bottom:36px;
+    text-shadow:0 2px 10px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.9);
+  }
+  .boutons-hero{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    padding:16px 32px;border-radius:8px;font-weight:800;font-size:15px;
+    text-decoration:none;letter-spacing:.02em;transition:transform .15s, box-shadow .15s;
+    border:2px solid transparent; cursor:pointer;
+  }
+  .btn:hover{transform:translateY(-2px) scale(1.02)}
+  .btn-principal{background:var(--amber);color:#2a1a05;box-shadow:0 6px 0 #9c6118, 0 10px 26px rgba(240,168,60,.35)}
+  .btn-principal:active{transform:translateY(2px);box-shadow:0 2px 0 #9c6118}
+  .btn-secondaire{background:transparent;border-color:rgba(255,255,255,.3);color:var(--text)}
+
+  /* --- Bouton video (pas d'autoplay en boucle : un vrai geste pour lancer) --- */
+  .voir-video{
+    display:inline-flex;align-items:center;gap:10px;margin-top:26px;
+    background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);border-radius:40px;
+    padding:10px 20px 10px 14px;font-size:13px;font-weight:600;
+  }
+  .voir-video .rond{
+    width:34px;height:34px;border-radius:50%;background:var(--amber);
+    display:flex;align-items:center;justify-content:center;color:#2a1a05;font-size:14px;
+  }
+  .modal-video{
+    position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.9);
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-video.actif{display:flex}
+  .modal-video video{max-width:900px;width:100%;border-radius:10px;border:2px solid var(--amber)}
+  .fermer-modal{position:absolute;top:24px;right:24px;font-size:28px;cursor:pointer;color:#fff}
+
+  /* --- Strates (recit de descente) --- */
+  .strate{
+    position:relative;min-height:100vh;display:flex;align-items:center;
+    background-size:cover;background-position:center;background-attachment:fixed;
+  }
+  .strate::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg, var(--bg) 0%, rgba(10,6,3,.25) 12%, rgba(10,6,3,.55) 88%, var(--bg) 100%);
+  }
+  .strate .panneau{
+    position:relative;z-index:1;max-width:440px;margin:60px;padding:30px 32px;
+    background:rgba(10,6,3,.6);backdrop-filter:blur(4px);
+    border:2px solid rgba(240,168,60,.3);border-radius:4px;
+    box-shadow:0 12px 40px rgba(0,0,0,.5);
+  }
+  .strate:nth-child(even) .panneau{margin-left:auto}
+  .strate .etiquette{
+    font-family:'Press Start 2P',monospace;font-size:10px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--amber);margin-bottom:14px;display:block;
+  }
+  .strate h2{font-size:clamp(22px,3.6vw,32px);margin-bottom:14px;font-weight:800}
+  .strate p{color:var(--text-dim);font-size:15.5px}
+
+  /* --- Features en panneaux de jeu --- */
+  .features{padding:120px 0 100px;text-align:center;position:relative;background:var(--bg)}
+  .features h2{font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
+  .features > .conteneur > p.intro{color:var(--text-dim);max-width:520px;margin:0 auto 60px}
+  .grille-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;text-align:left}
+  .carte-jeu{
+    position:relative;background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+    border:2px solid rgba(240,168,60,.22);border-radius:6px;padding:26px;
+    transition:border-color .2s, transform .2s;
+  }
+  .carte-jeu:hover{border-color:var(--amber);transform:translateY(-4px)}
+  .carte-jeu .icone{font-size:28px;margin-bottom:12px}
+  .carte-jeu h3{font-size:17px;margin-bottom:8px;font-weight:700}
+  .carte-jeu p{color:var(--text-dim);font-size:14px}
+
+  /* --- Galerie --- */
+  .galerie{padding:20px 0 110px;background:var(--bg)}
+  .galerie h2{text-align:center;font-size:clamp(22px,4vw,32px);margin-bottom:40px;font-weight:800}
+  .grille-galerie{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .grille-galerie figure{position:relative;overflow:hidden;border-radius:8px;border:2px solid rgba(240,168,60,.25)}
+  .grille-galerie img{transition:transform .3s}
+  .grille-galerie figure:hover img{transform:scale(1.06)}
+  @media (max-width:640px){ .grille-galerie{grid-template-columns:1fr} }
+
+  /* --- CTA finale --- */
+  .cta-finale{padding:120px 24px;text-align:center;background:radial-gradient(ellipse at center, rgba(240,168,60,.14), transparent 70%)}
+  .cta-finale h2{font-size:clamp(26px,5vw,44px);margin-bottom:18px;font-weight:800}
+  .cta-finale p{color:var(--text-dim);max-width:460px;margin:0 auto 34px}
+
+  footer{padding:40px 24px;text-align:center;color:var(--text-dim);font-size:13px;border-top:1px solid rgba(255,255,255,.08)}
+</style>
+</head>
+<body>
+
+<aside class="rail">
+  <img class="logo-mini" src="assets/logo.png" alt="">
+  <div class="jauge">
+    <div class="arrets" id="arrets"></div>
+    <div class="jauge-remplie" id="jaugeRemplie"></div>
+  </div>
+  <div class="profondeur" id="profondeur">0 M</div>
+</aside>
+
+<main>
+
+<section class="hero" id="surface">
+  <div class="hero-contenu">
+    <div class="titre-jeu pixel">UNDERHEARTH</div>
+    <div class="sous-titre">Mine for your soul</div>
+    <p class="pitch">
+      Creuse une mine infinie, strate après strate. Récolte, améliore ton
+      équipement, bâtis l'atelier ultime — et découvre ce qui dort tout en bas.
+    </p>
+    <div class="boutons-hero">
+      <a class="btn btn-principal" href="#cta">Ajouter à ma liste de souhaits</a>
+      <a class="btn btn-secondaire" href="#galerie">Voir les images</a>
+    </div>
+    <div class="voir-video" onclick="document.getElementById('modalVideo').classList.add('actif')">
+      <span class="rond">▶</span> Regarder l'aperçu du jeu
+    </div>
+  </div>
+</section>
+
+<section class="strate" data-depth="40" style="background-image:url('assets/bg_village.jpg')">
+  <div class="panneau">
+    <span class="etiquette">— 0 m · La surface</span>
+    <h2>Ton village, ta base</h2>
+    <p>Reviens à la surface pour vendre ton minerai, retrouver tes compagnons et
+    investir dans du meilleur matériel avant de replonger.</p>
+  </div>
+</section>
+
+<section class="strate" data-depth="180" style="background-image:url('assets/bg_mine.jpg')">
+  <div class="panneau">
+    <span class="etiquette">— 180 m · La mine</span>
+    <h2>Chaque coup de pioche compte</h2>
+    <p>Une mine générée sans fin, tap après tap : terre, pierre, granite... chaque
+    strate cache ses propres richesses et ses propres dangers.</p>
+  </div>
+</section>
+
+<section class="strate" data-depth="520" style="background-image:url('assets/bg_profond.jpg')">
+  <div class="panneau">
+    <span class="etiquette">— 520 m · Les profondeurs</span>
+    <h2>Toujours plus loin</h2>
+    <p>Plus tu descends, plus la mine se fait mystérieuse. Des secrets enfouis
+    n'attendent que d'être découverts par les plus téméraires.</p>
+  </div>
+</section>
+
+<section class="strate" data-depth="990" style="background-image:url('assets/capsule_cristaux.png')">
+  <div class="panneau">
+    <span class="etiquette">— 990 m · Le cœur cristallin</span>
+    <h2>La richesse ultime</h2>
+    <p>Au bout du voyage, des veines de cristal et un filon de trésors capables
+    de financer la mine de tes rêves.</p>
+  </div>
+</section>
+
+<section class="features">
+  <div class="conteneur">
+    <h2>Trois envies, une seule pioche</h2>
+    <p class="intro">Underhearth est construit autour de ce que tu as vraiment envie de ressentir en creusant.</p>
+    <div class="grille-features">
+      <div class="carte-jeu">
+        <div class="icone">💰</div>
+        <h3>Devenir riche en creusant</h3>
+        <p>Chaque profondeur rapporte plus que la précédente. Ton minerai devient ton empire.</p>
+      </div>
+      <div class="carte-jeu">
+        <div class="icone">⚙️</div>
+        <h3>Construire la mine ultime</h3>
+        <p>Rails de wagonnet, raffinerie, pompe à air, sismographe, foreuse automatique,
+        rat compagnon — un atelier entier à faire évoluer.</p>
+      </div>
+      <div class="carte-jeu">
+        <div class="icone">🔍</div>
+        <h3>Découvrir des secrets enfouis</h3>
+        <p>Veines rares, butins cachés, recoins qu'on ne trouve qu'en creusant
+        là où personne ne regarde.</p>
+      </div>
+      <div class="carte-jeu">
+        <div class="icone">🌳</div>
+        <h3>Un arbre de talents profond</h3>
+        <p>Trois branches, dix rangs chacune : façonne ton style de mineur, de la vitesse
+        pure à l'efficacité économique.</p>
+      </div>
+      <div class="carte-jeu">
+        <div class="icone">🤖</div>
+        <h3>Des mineurs à commander</h3>
+        <p>Recrute des aides autonomes qui creusent pour toi pendant que tu explores
+        plus profond encore.</p>
+      </div>
+      <div class="carte-jeu">
+        <div class="icone">🎙️</div>
+        <h3>Creuse entre amis</h3>
+        <p>Mode coopératif en ligne avec chat vocal de proximité — explorez la même
+        mine, ensemble.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="galerie" id="galerie">
+  <div class="conteneur">
+    <h2>Un monde à creuser</h2>
+    <div class="grille-galerie">
+      <figure><img src="assets/capsule_entree.png" alt="Entrée de la mine"></figure>
+      <figure><img src="assets/capsule_village.png" alt="Le village"></figure>
+      <figure><img src="assets/capsule_profondeurs.png" alt="Les profondeurs"></figure>
+      <figure><img src="assets/capsule_cristaux.png" alt="Les cristaux"></figure>
+    </div>
+  </div>
+</section>
+
+<section class="cta-finale" id="cta">
+  <h2>Ta pioche t'attend.</h2>
+  <p>Underhearth arrive bientôt. Ajoute-le à ta liste de souhaits pour ne pas
+  rater le lancement.</p>
+  <a class="btn btn-principal" href="#">Ajouter à ma liste de souhaits</a>
+</section>
+
+<footer>Un jeu de Bluehood Games</footer>
+
+</main>
+
+<div class="modal-video" id="modalVideo">
+  <span class="fermer-modal" onclick="document.getElementById('modalVideo').classList.remove('actif')">✕</span>
+  <video src="assets/splash.mp4" controls autoplay></video>
+</div>
+
+<script>
+// Rail de profondeur : jauge + numero qui suivent le defilement, arrets
+// cliquables genre coupe geologique — la navigation EST la descente.
+const strates = document.querySelectorAll('.strate');
+const arretsConteneur = document.getElementById('arrets');
+const jauge = document.getElementById('jaugeRemplie');
+const profondeurTxt = document.getElementById('profondeur');
+
+strates.forEach((s, i) => {
+  const pos = (i + 1) / (strates.length + 1) * 100;
+  const pt = document.createElement('div');
+  pt.className = 'arret';
+  pt.style.top = pos + '%';
+  pt.onclick = () => s.scrollIntoView({behavior:'smooth'});
+  pt.title = s.dataset.depth + ' m';
+  arretsConteneur.append(pt);
+});
+const points = arretsConteneur.querySelectorAll('.arret');
+
+function maj(){
+  const h = document.documentElement;
+  const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  jauge.style.height = Math.min(100, Math.max(0, pct)) + '%';
+
+  let profondeurActuelle = 0, indexActif = -1;
+  strates.forEach((s, i) => {
+    const r = s.getBoundingClientRect();
+    if (r.top < window.innerHeight * 0.6) { profondeurActuelle = s.dataset.depth; indexActif = i; }
+  });
+  profondeurTxt.textContent = profondeurActuelle + ' M';
+  points.forEach((p, i) => p.classList.toggle('actif', i === indexActif));
+}
+window.addEventListener('scroll', maj);
+maj();
+</script>
+</body>
+</html>
