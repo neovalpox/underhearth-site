@@ -162,7 +162,7 @@
   }
   .strate::before{
     content:'';position:absolute;inset:0;
-    background:linear-gradient(180deg, var(--bg) 0%, rgba(10,6,3,.25) 12%, rgba(10,6,3,.55) 88%, var(--bg) 100%);
+    background:linear-gradient(180deg, var(--bg) 0%, rgba(10,6,3,.25) 12%, rgba(10,6,3,.78) 82%, var(--bg) 100%);
   }
   .strate .panneau{
     position:relative;z-index:1;max-width:440px;margin:60px;padding:30px 32px;
@@ -218,30 +218,59 @@
 
   /* --- Bandeau de rails : reconstitue le vrai systeme du jeu (voir
      scripts\rail_cart.gd / mine_view.gd) — tuile rail_h.png repetee au sol,
-     wagonnet cart_anim.png qui traverse en boucle avec ses roues qui tournent. --- */
+     wagonnets cart_anim.png qui traversent en boucle, roues tournantes,
+     dans une vraie petite scene (fond de mine, poteaux de soutenement,
+     lanternes) plutot qu'un simple trait sur fond plat. --- */
   .bandeau-rails{
-    position:relative;height:74px;background:linear-gradient(180deg,#0a0603,#120a05);
-    overflow:hidden;border-top:1px solid rgba(240,168,60,.15);border-bottom:1px solid rgba(240,168,60,.15);
+    position:relative;height:160px;overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(10,6,3,.35) 0%, rgba(10,6,3,.75) 70%, var(--bg) 100%),
+      url('assets/bg_mine.jpg') center 30%/cover;
+    border-top:2px solid rgba(240,168,60,.25);border-bottom:2px solid rgba(240,168,60,.25);
+  }
+  .bandeau-rails .legende{
+    position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:3;
+    font-family:'Press Start 2P',monospace;font-size:clamp(7px,2.2vw,11px);letter-spacing:.05em;
+    line-height:1.7;color:var(--amber);text-shadow:0 2px 6px rgba(0,0,0,.9);text-align:center;
+    background:rgba(10,6,3,.6);padding:9px 18px;border-radius:8px;border:1px solid rgba(240,168,60,.3);
+    max-width:90%;white-space:nowrap;
+  }
+  @media (max-width:480px){
+    .bandeau-rails .legende{white-space:normal;max-width:94%}
+  }
+  .bandeau-rails .poteau{
+    position:absolute;bottom:52px;width:16px;height:64px;
+    background-image:url('assets/icones/support.png');background-size:100% 100%;
+    image-rendering:pixelated;image-rendering:crisp-edges;opacity:.85;
+  }
+  .bandeau-rails .lanterne-rail{
+    position:absolute;bottom:110px;width:16px;height:auto;
+    filter:drop-shadow(0 0 8px rgba(240,168,60,.8));
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    animation:vacille 2.2s ease-in-out infinite;
   }
   .bandeau-rails .voie{
-    position:absolute;left:0;right:0;top:50%;height:16px;margin-top:-8px;
+    position:absolute;left:0;right:0;bottom:44px;height:16px;z-index:2;
     background-image:url('assets/icones/rail_h.png');
     background-repeat:repeat-x;background-size:48px 16px;
     image-rendering:pixelated;image-rendering:crisp-edges;
-    opacity:.9;
   }
   .bandeau-rails .chariot{
-    position:absolute;top:50%;left:-70px;width:48px;height:48px;margin-top:-32px;
+    position:absolute;bottom:20px;left:-70px;width:64px;height:64px;z-index:2;
     background-image:url('assets/icones/cart_anim.png');
     background-size:400% 300%;background-position:0% 0%;
     image-rendering:pixelated;image-rendering:crisp-edges;
     filter:drop-shadow(0 4px 3px rgba(0,0,0,.6));
-    animation:roulement .5s steps(4) infinite, trajet 9s linear infinite;
+    animation:roulement .5s steps(4) infinite, trajet 8s linear infinite;
   }
-  @keyframes trajet{
-    0%{ left:-70px; }
-    100%{ left:100%; }
+  .bandeau-rails .chariot.deux{
+    width:48px;height:48px;bottom:28px;
+    animation:roulement .45s steps(4) infinite, trajet2 11s linear infinite;
+    animation-delay:0s, 3s;
+    opacity:.85;
   }
+  @keyframes trajet{ 0%{ left:-70px; } 100%{ left:100%; } }
+  @keyframes trajet2{ 0%{ left:-60px; } 100%{ left:100%; } }
 
   /* --- Systemes : liste complete, esprit "fiche technique" plutot que marketing --- */
   .systemes{padding:20px 0 110px;background:var(--bg)}
@@ -463,8 +492,16 @@
 </section>
 
 <div class="bandeau-rails" aria-hidden="true">
+  <div class="legende">Rails de wagonnet — voyage rapide dans la mine</div>
+  <div class="poteau" style="left:12%"></div>
+  <div class="poteau" style="left:38%"></div>
+  <div class="poteau" style="left:64%"></div>
+  <div class="poteau" style="left:88%"></div>
+  <img class="lanterne-rail" style="left:12%" src="assets/icones/lamp2.png" alt="">
+  <img class="lanterne-rail" style="left:64%" src="assets/icones/lamp2.png" alt="">
   <div class="voie"></div>
   <div class="chariot"></div>
+  <div class="chariot deux"></div>
 </div>
 
 <section class="systemes nav-arret" data-depth="1800" data-nav="Systèmes">
