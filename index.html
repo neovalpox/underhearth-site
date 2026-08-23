@@ -130,6 +130,10 @@
     width:34px;height:34px;border-radius:50%;background:var(--amber);
     display:flex;align-items:center;justify-content:center;color:#2a1a05;font-size:14px;
   }
+  .miniature-gif{
+    width:44px;height:28px;object-fit:cover;border-radius:6px;
+    border:1px solid rgba(255,255,255,.25);
+  }
   .modal-video{
     position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.9);
     display:none;align-items:center;justify-content:center;padding:20px;
@@ -176,6 +180,28 @@
   .carte-jeu h3{font-size:17px;margin-bottom:8px;font-weight:700}
   .carte-jeu p{color:var(--text-dim);font-size:14px}
 
+  /* --- Systemes : liste complete, esprit "fiche technique" plutot que marketing --- */
+  .systemes{padding:20px 0 110px;background:var(--bg)}
+  .systemes h2{text-align:center;font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
+  .systemes > .conteneur > p.intro{color:var(--text-dim);text-align:center;max-width:520px;margin:0 auto 50px}
+  .grille-systemes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+  .bloc-systeme{
+    border:2px solid rgba(240,168,60,.22);border-radius:8px;overflow:hidden;
+    background:rgba(255,255,255,.02);
+  }
+  .entete-systeme{
+    background-size:cover;background-position:center;padding:22px 18px;position:relative;
+  }
+  .entete-systeme::before{content:'';position:absolute;inset:0;background:rgba(10,6,3,.82)}
+  .entete-systeme h3{position:relative;z-index:1;font-size:17px;font-weight:800;color:#fff}
+  .bloc-systeme ul{list-style:none;padding:16px 18px 20px}
+  .bloc-systeme li{
+    color:var(--text-dim);font-size:13.5px;padding:7px 0 7px 20px;position:relative;
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .bloc-systeme li:last-child{border-bottom:none}
+  .bloc-systeme li::before{content:'⛏';position:absolute;left:0;color:var(--amber);font-size:11px}
+
   /* --- Galerie --- */
   .galerie{padding:20px 0 110px;background:var(--bg)}
   .galerie h2{text-align:center;font-size:clamp(22px,4vw,32px);margin-bottom:40px;font-weight:800}
@@ -219,6 +245,7 @@
       <a class="btn btn-secondaire" href="#galerie">Voir les images</a>
     </div>
     <div class="voir-video" onclick="document.getElementById('modalVideo').classList.add('actif')">
+      <img class="miniature-gif" src="assets/splash.gif" alt="">
       <span class="rond">▶</span> Regarder l'aperçu du jeu
     </div>
   </div>
@@ -300,6 +327,67 @@
         <p>Mode coopératif en ligne avec chat vocal de proximité — explorez la même
         mine, ensemble.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="systemes">
+  <div class="conteneur">
+    <h2>Tout ce qu'il y a dans la mine</h2>
+    <p class="intro">La liste complète, sans filtre marketing — ce qui est vraiment dans le jeu.</p>
+    <div class="grille-systemes">
+
+      <div class="bloc-systeme">
+        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_profondeurs.png')">
+          <h3>La mine</h3>
+        </div>
+        <ul>
+          <li>Mine infinie générée par blocs, sans fin</li>
+          <li>5 strates : terre, pierre, granite, cristal, volcanique</li>
+          <li>Durabilité individuelle par bloc — chaque coup compte</li>
+          <li>Déplacement intelligent pour naviguer la mine creusée</li>
+        </ul>
+      </div>
+
+      <div class="bloc-systeme">
+        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_village.png')">
+          <h3>Progression</h3>
+        </div>
+        <ul>
+          <li>Inventaire limité avec dépôt automatique au village</li>
+          <li>Sauvegarde automatique de la partie</li>
+          <li>Boutique d'améliorations d'équipement</li>
+          <li>Arbre de talents : 3 branches, 10 rangs chacune</li>
+        </ul>
+      </div>
+
+      <div class="bloc-systeme">
+        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_entree.png')">
+          <h3>L'atelier</h3>
+        </div>
+        <ul>
+          <li>Rails de wagonnet — voyage rapide dans la mine</li>
+          <li>Raffinerie pour traiter le minerai brut</li>
+          <li>Pompe à air, pour creuser plus profond sans danger</li>
+          <li>Sismographe — repère les veines avant de creuser</li>
+          <li>Foreuse automatique, minage passif</li>
+          <li>Rat compagnon, un allié de plus dans l'atelier</li>
+        </ul>
+      </div>
+
+      <div class="bloc-systeme">
+        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_cristaux.png')">
+          <h3>Exploration & multijoueur</h3>
+        </div>
+        <ul>
+          <li>Mineurs IA autonomes à recruter et commander</li>
+          <li>Veines rares et butins secrets à débusquer</li>
+          <li>Coopératif en ligne, avec des amis</li>
+          <li>Chat vocal de proximité pendant l'exploration</li>
+          <li>Français et anglais, intégration Steam</li>
+        </ul>
+      </div>
+
     </div>
   </div>
 </section>
