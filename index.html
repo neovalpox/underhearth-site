@@ -177,8 +177,11 @@
   }
   .carte-jeu:hover{border-color:var(--amber);transform:translateY(-4px)}
   .carte-jeu .icone{
-    font-family:'Press Start 2P',monospace;font-size:16px;color:var(--amber);
-    margin-bottom:14px;opacity:.85;
+    width:54px;height:54px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;
+    background:rgba(240,168,60,.1);border:2px solid rgba(240,168,60,.35);border-radius:6px;
+  }
+  .carte-jeu .icone img{
+    width:30px;height:30px;image-rendering:pixelated;image-rendering:crisp-edges;
   }
   .carte-jeu h3{font-size:17px;margin-bottom:8px;font-weight:700}
   .carte-jeu p{color:var(--text-dim);font-size:14px}
@@ -296,36 +299,36 @@
     <p class="intro">Underhearth est construit autour de ce que tu as vraiment envie de ressentir en creusant.</p>
     <div class="grille-features">
       <div class="carte-jeu">
-        <div class="icone">01</div>
+        <div class="icone"><img src="assets/icones/icon_coin.png" alt=""></div>
         <h3>Devenir riche en creusant</h3>
         <p>Chaque profondeur rapporte plus que la précédente. Ton minerai devient ton empire.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">02</div>
+        <div class="icone"><img src="assets/icones/icon_atelier.png" alt=""></div>
         <h3>Construire la mine ultime</h3>
         <p>Rails de wagonnet, raffinerie, pompe à air, sismographe, foreuse automatique,
         rat compagnon — un atelier entier à faire évoluer.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">03</div>
+        <div class="icone"><img src="assets/icones/icon_map.png" alt=""></div>
         <h3>Découvrir des secrets enfouis</h3>
         <p>Veines rares, butins cachés, recoins qu'on ne trouve qu'en creusant
         là où personne ne regarde.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">04</div>
+        <div class="icone"><img src="assets/icones/icon_talents.png" alt=""></div>
         <h3>Un arbre de talents profond</h3>
         <p>Trois branches, dix rangs chacune : façonne ton style de mineur, de la vitesse
         pure à l'efficacité économique.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">05</div>
+        <div class="icone"><img src="assets/icones/radial_act_helpers.png" alt=""></div>
         <h3>Des mineurs à commander</h3>
         <p>Recrute des aides autonomes qui creusent pour toi pendant que tu explores
         plus profond encore.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">06</div>
+        <div class="icone"><img src="assets/icones/radial_icon_coop.png" alt=""></div>
         <h3>Creuse entre amis</h3>
         <p>Mode coopératif en ligne avec chat vocal de proximité — explorez la même
         mine, ensemble.</p>
