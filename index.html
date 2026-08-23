@@ -186,6 +186,23 @@
   .carte-jeu h3{font-size:17px;margin-bottom:8px;font-weight:700}
   .carte-jeu p{color:var(--text-dim);font-size:14px}
 
+  /* --- Createur de personnage : vrais calques du jeu, composes en CSS --- */
+  .createur{padding:20px 0 110px;background:var(--bg);text-align:center}
+  .createur h2{font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
+  .createur .intro{color:var(--text-dim);max-width:560px;margin:0 auto 46px}
+  .grille-perso{display:flex;flex-wrap:wrap;justify-content:center;gap:22px}
+  .perso{
+    position:relative;isolation:isolate;width:128px;height:128px;background:rgba(255,255,255,.03);
+    border:2px solid rgba(240,168,60,.25);border-radius:8px;overflow:hidden;
+    transition:border-color .2s, transform .2s;
+  }
+  .perso:hover{border-color:var(--amber);transform:translateY(-4px)}
+  .perso .calque{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    background-repeat:no-repeat;background-position:0 0;background-size:200% 400%;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+  }
+
   /* --- Systemes : liste complete, esprit "fiche technique" plutot que marketing --- */
   .systemes{padding:20px 0 110px;background:var(--bg)}
   .systemes h2{text-align:center;font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
@@ -196,10 +213,15 @@
     background:rgba(255,255,255,.02);
   }
   .entete-systeme{
-    background-size:cover;background-position:center;padding:22px 18px;position:relative;
+    padding:18px;display:flex;align-items:center;gap:14px;
+    background:rgba(240,168,60,.06);border-bottom:2px solid rgba(240,168,60,.22);
   }
-  .entete-systeme::before{content:'';position:absolute;inset:0;background:rgba(10,6,3,.82)}
-  .entete-systeme h3{position:relative;z-index:1;font-size:17px;font-weight:800;color:#fff}
+  .icone-systeme{
+    width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(240,168,60,.12);border:2px solid rgba(240,168,60,.4);border-radius:6px;
+  }
+  .icone-systeme img{width:26px;height:26px;image-rendering:pixelated;image-rendering:crisp-edges}
+  .entete-systeme h3{font-size:16px;font-weight:800;color:#fff}
   .bloc-systeme ul{list-style:none;padding:16px 18px 20px}
   .bloc-systeme li{
     color:var(--text-dim);font-size:13.5px;padding:7px 0 7px 20px;position:relative;
@@ -251,7 +273,7 @@
       <a class="btn btn-secondaire" href="#galerie">Voir les images</a>
     </div>
     <div class="voir-video" onclick="document.getElementById('modalVideo').classList.add('actif')">
-      <img class="miniature-gif" src="assets/splash.gif" alt="">
+      <img class="miniature-gif" src="assets/capsule_sm_village.png" alt="">
       <span class="rond">▶</span> Regarder l'aperçu du jeu
     </div>
   </div>
@@ -337,6 +359,59 @@
   </div>
 </section>
 
+<section class="createur nav-arret" data-depth="1600" data-nav="Ton mineur">
+  <div class="conteneur">
+    <h2>Un mineur qui te ressemble</h2>
+    <p class="intro">Peau, coiffure, couleur de cheveux, haut, pantalon, chaussures —
+    chaque choix est indépendant. 87 480 combinaisons possibles, et ton allure
+    suit jusqu'en coopératif.</p>
+    <div class="grille-perso">
+      <div class="perso">
+        <div class="calque" style="background-image:url('assets/perso/body_light.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/pants_black.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shoes_brown.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shirt_red.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/hair_short_hair_black.png')"></div>
+      </div>
+      <div class="perso">
+        <div class="calque" style="background-image:url('assets/perso/body_dark.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/pants_white.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shoes_black.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shirt_blue_light.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/hair_spikey_blonde.png')"></div>
+      </div>
+      <div class="perso">
+        <div class="calque" style="background-image:url('assets/perso/body_brown.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/pants_brown.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shoes_orange.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shirt_green_light.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/hair_pony_tail_pink.png')"></div>
+      </div>
+      <div class="perso">
+        <div class="calque" style="background-image:url('assets/perso/body_light.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/pants_blue_light.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shoes_white.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shirt_yellow.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/hair_big_bun_purple.png')"></div>
+      </div>
+      <div class="perso">
+        <div class="calque" style="background-image:url('assets/perso/body_dark.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/pants_green_light.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shoes_black.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shirt_orange.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/hair_short_hair_white.png')"></div>
+      </div>
+      <div class="perso">
+        <div class="calque" style="background-image:url('assets/perso/body_brown.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/pants_white.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shoes_brown.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/shirt_red.png')"></div>
+        <div class="calque" style="background-image:url('assets/perso/hair_spikey_blonde.png')"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="systemes nav-arret" data-depth="1800" data-nav="Systèmes">
   <div class="conteneur">
     <h2>Tout ce qu'il y a dans la mine</h2>
@@ -344,7 +419,8 @@
     <div class="grille-systemes">
 
       <div class="bloc-systeme">
-        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_profondeurs.png')">
+        <div class="entete-systeme">
+          <div class="icone-systeme"><img src="assets/icones/chest.png" alt=""></div>
           <h3>La mine</h3>
         </div>
         <ul>
@@ -356,7 +432,8 @@
       </div>
 
       <div class="bloc-systeme">
-        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_village.png')">
+        <div class="entete-systeme">
+          <div class="icone-systeme"><img src="assets/icones/icon_talents.png" alt=""></div>
           <h3>Progression</h3>
         </div>
         <ul>
@@ -368,7 +445,8 @@
       </div>
 
       <div class="bloc-systeme">
-        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_entree.png')">
+        <div class="entete-systeme">
+          <div class="icone-systeme"><img src="assets/icones/workshop.png" alt=""></div>
           <h3>L'atelier</h3>
         </div>
         <ul>
@@ -382,7 +460,8 @@
       </div>
 
       <div class="bloc-systeme">
-        <div class="entete-systeme" style="background-image:url('assets/capsule_sm_cristaux.png')">
+        <div class="entete-systeme">
+          <div class="icone-systeme"><img src="assets/icones/drone.png" alt=""></div>
           <h3>Exploration & multijoueur</h3>
         </div>
         <ul>
