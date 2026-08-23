@@ -4,6 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Underhearth — Mine for your soul</title>
+<meta name="description" content="Creuse une mine infinie, strate après strate. Récolte, améliore ton équipement, bâtis l'atelier ultime — et découvre ce qui dort tout en bas.">
+<!-- Apercu de lien (WhatsApp, Discord, Twitter...) : sans ça, coller le lien
+     n'affiche qu'une ligne de texte nue, pas tres vendeur pour un jeu. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Underhearth — Mine for your soul">
+<meta property="og:description" content="Creuse une mine infinie, strate après strate. Récolte, améliore ton équipement, bâtis l'atelier ultime — et découvre ce qui dort tout en bas.">
+<meta property="og:image" content="https://neovalpox.github.io/underhearth-site/assets/capsule_village.png">
+<meta property="og:url" content="https://neovalpox.github.io/underhearth-site/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Underhearth — Mine for your soul">
+<meta name="twitter:description" content="Creuse une mine infinie, strate après strate. Récolte, améliore ton équipement, bâtis l'atelier ultime.">
+<meta name="twitter:image" content="https://neovalpox.github.io/underhearth-site/assets/capsule_village.png">
+<link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
@@ -13,8 +26,9 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
+  html{max-width:100%;overflow-x:hidden}
   body{
-    background:var(--bg); color:var(--text);
+    background:var(--bg); color:var(--text); max-width:100%;
     font-family:'Rubik',system-ui,sans-serif; line-height:1.6; overflow-x:hidden;
     cursor:default;
   }
@@ -79,8 +93,12 @@
       linear-gradient(180deg, rgba(10,6,3,.75) 0%, rgba(10,6,3,.45) 32%, rgba(10,6,3,.55) 68%, var(--bg) 100%);
   }
   .hero-contenu{
-    position:relative;z-index:2;padding:38px 32px;max-width:640px;
+    position:relative;z-index:2;padding:38px 32px;width:min(640px,92vw);
+    min-width:0;box-sizing:border-box;overflow-wrap:break-word;
     background:rgba(6,4,2,.42);border-radius:14px;backdrop-filter:blur(3px);
+  }
+  @media (max-width:480px){
+    .hero-contenu{padding:26px 18px}
   }
   .hero .sous-titre{
     font-family:'Press Start 2P',monospace;font-size:clamp(9px,1.6vw,13px);
@@ -197,7 +215,7 @@
       équipement, bâtis l'atelier ultime — et découvre ce qui dort tout en bas.
     </p>
     <div class="boutons-hero">
-      <a class="btn btn-principal" href="#cta">Ajouter à ma liste de souhaits</a>
+      <a class="btn btn-principal" href="#cta">Être prévenu à la sortie</a>
       <a class="btn btn-secondaire" href="#galerie">Voir les images</a>
     </div>
     <div class="voir-video" onclick="document.getElementById('modalVideo').classList.add('actif')">
@@ -300,9 +318,9 @@
 
 <section class="cta-finale" id="cta">
   <h2>Ta pioche t'attend.</h2>
-  <p>Underhearth arrive bientôt. Ajoute-le à ta liste de souhaits pour ne pas
-  rater le lancement.</p>
-  <a class="btn btn-principal" href="#">Ajouter à ma liste de souhaits</a>
+  <p>Underhearth arrive bientôt, encore en développement. Laisse-nous un mot
+  pour être prévenu dès que la page officielle (Steam) sera en ligne.</p>
+  <a class="btn btn-principal" href="mailto:neovalpox@gmail.com?subject=Underhearth%20—%20pr%C3%A9viens-moi%20de%20la%20sortie">Me prévenir à la sortie</a>
 </section>
 
 <footer>Un jeu de Bluehood Games</footer>
