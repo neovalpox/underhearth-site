@@ -216,6 +216,33 @@
     image-rendering:pixelated;image-rendering:crisp-edges;
   }
 
+  /* --- Bandeau de rails : reconstitue le vrai systeme du jeu (voir
+     scripts\rail_cart.gd / mine_view.gd) — tuile rail_h.png repetee au sol,
+     wagonnet cart_anim.png qui traverse en boucle avec ses roues qui tournent. --- */
+  .bandeau-rails{
+    position:relative;height:74px;background:linear-gradient(180deg,#0a0603,#120a05);
+    overflow:hidden;border-top:1px solid rgba(240,168,60,.15);border-bottom:1px solid rgba(240,168,60,.15);
+  }
+  .bandeau-rails .voie{
+    position:absolute;left:0;right:0;top:50%;height:16px;margin-top:-8px;
+    background-image:url('assets/icones/rail_h.png');
+    background-repeat:repeat-x;background-size:48px 16px;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    opacity:.9;
+  }
+  .bandeau-rails .chariot{
+    position:absolute;top:50%;left:-70px;width:48px;height:48px;margin-top:-32px;
+    background-image:url('assets/icones/cart_anim.png');
+    background-size:400% 300%;background-position:0% 0%;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    filter:drop-shadow(0 4px 3px rgba(0,0,0,.6));
+    animation:roulement .5s steps(4) infinite, trajet 9s linear infinite;
+  }
+  @keyframes trajet{
+    0%{ left:-70px; }
+    100%{ left:100%; }
+  }
+
   /* --- Systemes : liste complete, esprit "fiche technique" plutot que marketing --- */
   .systemes{padding:20px 0 110px;background:var(--bg)}
   .systemes h2{text-align:center;font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
@@ -434,6 +461,11 @@
     </div>
   </div>
 </section>
+
+<div class="bandeau-rails" aria-hidden="true">
+  <div class="voie"></div>
+  <div class="chariot"></div>
+</div>
 
 <section class="systemes nav-arret" data-depth="1800" data-nav="Systèmes">
   <div class="conteneur">
