@@ -176,7 +176,10 @@
     transition:border-color .2s, transform .2s;
   }
   .carte-jeu:hover{border-color:var(--amber);transform:translateY(-4px)}
-  .carte-jeu .icone{font-size:28px;margin-bottom:12px}
+  .carte-jeu .icone{
+    font-family:'Press Start 2P',monospace;font-size:16px;color:var(--amber);
+    margin-bottom:14px;opacity:.85;
+  }
   .carte-jeu h3{font-size:17px;margin-bottom:8px;font-weight:700}
   .carte-jeu p{color:var(--text-dim);font-size:14px}
 
@@ -200,7 +203,7 @@
     border-bottom:1px solid rgba(255,255,255,.06);
   }
   .bloc-systeme li:last-child{border-bottom:none}
-  .bloc-systeme li::before{content:'⛏';position:absolute;left:0;color:var(--amber);font-size:11px}
+  .bloc-systeme li::before{content:'—';position:absolute;left:0;color:var(--amber)}
 
   /* --- Galerie --- */
   .galerie{padding:20px 0 110px;background:var(--bg)}
@@ -232,7 +235,7 @@
 
 <main>
 
-<section class="hero" id="surface">
+<section class="hero nav-arret" id="surface" data-nav="Surface" data-depth="0">
   <div class="hero-contenu">
     <div class="titre-jeu pixel">UNDERHEARTH</div>
     <div class="sous-titre">Mine for your soul</div>
@@ -251,7 +254,7 @@
   </div>
 </section>
 
-<section class="strate" data-depth="40" style="background-image:url('assets/bg_village.jpg')">
+<section class="strate nav-arret" data-depth="40" data-nav="Village" style="background-image:url('assets/bg_village.jpg')">
   <div class="panneau">
     <span class="etiquette">— 0 m · La surface</span>
     <h2>Ton village, ta base</h2>
@@ -260,7 +263,7 @@
   </div>
 </section>
 
-<section class="strate" data-depth="180" style="background-image:url('assets/bg_mine.jpg')">
+<section class="strate nav-arret" data-depth="180" data-nav="La mine" style="background-image:url('assets/bg_mine.jpg')">
   <div class="panneau">
     <span class="etiquette">— 180 m · La mine</span>
     <h2>Chaque coup de pioche compte</h2>
@@ -269,7 +272,7 @@
   </div>
 </section>
 
-<section class="strate" data-depth="520" style="background-image:url('assets/bg_profond.jpg')">
+<section class="strate nav-arret" data-depth="520" data-nav="Profondeurs" style="background-image:url('assets/bg_profond.jpg')">
   <div class="panneau">
     <span class="etiquette">— 520 m · Les profondeurs</span>
     <h2>Toujours plus loin</h2>
@@ -278,7 +281,7 @@
   </div>
 </section>
 
-<section class="strate" data-depth="990" style="background-image:url('assets/capsule_cristaux.png')">
+<section class="strate nav-arret" data-depth="990" data-nav="Cristaux" style="background-image:url('assets/capsule_cristaux.png')">
   <div class="panneau">
     <span class="etiquette">— 990 m · Le cœur cristallin</span>
     <h2>La richesse ultime</h2>
@@ -287,42 +290,42 @@
   </div>
 </section>
 
-<section class="features">
+<section class="features nav-arret" data-depth="1400" data-nav="Envies">
   <div class="conteneur">
     <h2>Trois envies, une seule pioche</h2>
     <p class="intro">Underhearth est construit autour de ce que tu as vraiment envie de ressentir en creusant.</p>
     <div class="grille-features">
       <div class="carte-jeu">
-        <div class="icone">💰</div>
+        <div class="icone">01</div>
         <h3>Devenir riche en creusant</h3>
         <p>Chaque profondeur rapporte plus que la précédente. Ton minerai devient ton empire.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">⚙️</div>
+        <div class="icone">02</div>
         <h3>Construire la mine ultime</h3>
         <p>Rails de wagonnet, raffinerie, pompe à air, sismographe, foreuse automatique,
         rat compagnon — un atelier entier à faire évoluer.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">🔍</div>
+        <div class="icone">03</div>
         <h3>Découvrir des secrets enfouis</h3>
         <p>Veines rares, butins cachés, recoins qu'on ne trouve qu'en creusant
         là où personne ne regarde.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">🌳</div>
+        <div class="icone">04</div>
         <h3>Un arbre de talents profond</h3>
         <p>Trois branches, dix rangs chacune : façonne ton style de mineur, de la vitesse
         pure à l'efficacité économique.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">🤖</div>
+        <div class="icone">05</div>
         <h3>Des mineurs à commander</h3>
         <p>Recrute des aides autonomes qui creusent pour toi pendant que tu explores
         plus profond encore.</p>
       </div>
       <div class="carte-jeu">
-        <div class="icone">🎙️</div>
+        <div class="icone">06</div>
         <h3>Creuse entre amis</h3>
         <p>Mode coopératif en ligne avec chat vocal de proximité — explorez la même
         mine, ensemble.</p>
@@ -331,7 +334,7 @@
   </div>
 </section>
 
-<section class="systemes">
+<section class="systemes nav-arret" data-depth="1800" data-nav="Systèmes">
   <div class="conteneur">
     <h2>Tout ce qu'il y a dans la mine</h2>
     <p class="intro">La liste complète, sans filtre marketing — ce qui est vraiment dans le jeu.</p>
@@ -392,7 +395,7 @@
   </div>
 </section>
 
-<section class="galerie" id="galerie">
+<section class="galerie nav-arret" id="galerie" data-depth="2200" data-nav="Galerie">
   <div class="conteneur">
     <h2>Un monde à creuser</h2>
     <div class="grille-galerie">
@@ -404,7 +407,7 @@
   </div>
 </section>
 
-<section class="cta-finale" id="cta">
+<section class="cta-finale nav-arret" id="cta" data-depth="2600" data-nav="Sortie">
   <h2>Ta pioche t'attend.</h2>
   <p>Underhearth arrive bientôt, encore en développement. Laisse-nous un mot
   pour être prévenu dès que la page officielle (Steam) sera en ligne.</p>
@@ -423,7 +426,10 @@
 <script>
 // Rail de profondeur : jauge + numero qui suivent le defilement, arrets
 // cliquables genre coupe geologique — la navigation EST la descente.
-const strates = document.querySelectorAll('.strate');
+// TOUTES les sections (pas seulement les 4 "strates" narratives) sont des
+// arrets : avec autant de contenu a parcourir, la navigation doit permettre
+// de sauter direct a "Systemes" ou "Galerie" sans tout re-scroller a la main.
+const strates = document.querySelectorAll('.nav-arret');
 const arretsConteneur = document.getElementById('arrets');
 const jauge = document.getElementById('jaugeRemplie');
 const profondeurTxt = document.getElementById('profondeur');
@@ -434,7 +440,7 @@ strates.forEach((s, i) => {
   pt.className = 'arret';
   pt.style.top = pos + '%';
   pt.onclick = () => s.scrollIntoView({behavior:'smooth'});
-  pt.title = s.dataset.depth + ' m';
+  pt.title = `${s.dataset.nav} — ${s.dataset.depth} m`;
   arretsConteneur.append(pt);
 });
 const points = arretsConteneur.querySelectorAll('.arret');
