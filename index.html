@@ -64,6 +64,18 @@
     background:linear-gradient(180deg, var(--amber), var(--volcanic));height:0%;
     transition:height .1s linear;
   }
+  /* Le wagonnet roule le long des rails, a la meme hauteur que la jauge —
+     un petit clin d'oeil vivant plutot qu'une simple barre de progression. */
+  .rail .wagonnet{
+    position:absolute;left:50%;bottom:0%;width:26px;height:26px;
+    transform:translate(-50%,50%);transition:bottom .1s linear;
+    background-image:url('assets/icones/cart_anim.png');
+    background-size:400% 300%;background-position:0% 0%;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    animation:roulement .6s steps(4) infinite;
+    filter:drop-shadow(0 0 4px rgba(240,168,60,.5));
+  }
+  @keyframes roulement{ to{ background-position:100% 0%; } }
   .rail .arrets{position:absolute;inset:0}
   .rail .arret{
     position:absolute;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;
@@ -89,6 +101,7 @@
   .hero::before{
     content:'';position:absolute;inset:0;
     background:
+      radial-gradient(ellipse 45% 40% at 50% 46%, rgba(240,168,60,.16) 0%, transparent 70%),
       radial-gradient(ellipse 70% 60% at 50% 46%, rgba(5,3,1,.72) 0%, rgba(5,3,1,.4) 55%, rgba(5,3,1,.2) 75%),
       linear-gradient(180deg, rgba(10,6,3,.75) 0%, rgba(10,6,3,.45) 32%, rgba(10,6,3,.55) 68%, var(--bg) 100%);
   }
@@ -244,7 +257,16 @@
   .cta-finale h2{font-size:clamp(26px,5vw,44px);margin-bottom:18px;font-weight:800}
   .cta-finale p{color:var(--text-dim);max-width:460px;margin:0 auto 34px}
 
-  footer{padding:40px 24px;text-align:center;color:var(--text-dim);font-size:13px;border-top:1px solid rgba(255,255,255,.08)}
+  footer{
+    padding:40px 24px;text-align:center;color:var(--text-dim);font-size:13px;
+    border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;
+    align-items:center;gap:10px;
+  }
+  footer .lanterne{
+    width:20px;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;
+    filter:drop-shadow(0 0 6px rgba(240,168,60,.7));animation:vacille 2.4s ease-in-out infinite;
+  }
+  @keyframes vacille{ 0%,100%{opacity:1} 50%{opacity:.7} }
 </style>
 </head>
 <body>
@@ -254,6 +276,7 @@
   <div class="jauge">
     <div class="arrets" id="arrets"></div>
     <div class="jauge-remplie" id="jaugeRemplie"></div>
+    <div class="wagonnet" id="wagonnet"></div>
   </div>
   <div class="profondeur" id="profondeur">0 M</div>
 </aside>
@@ -496,7 +519,10 @@
   <a class="btn btn-principal" href="mailto:neovalpox@gmail.com?subject=Underhearth%20—%20pr%C3%A9viens-moi%20de%20la%20sortie">Me prévenir à la sortie</a>
 </section>
 
-<footer>Un jeu de Bluehood Games</footer>
+<footer>
+  <img class="lanterne" src="assets/icones/lamp.png" alt="">
+  Un jeu de Bluehood Games — fait avec le cœur, près du foyer.
+</footer>
 
 </main>
 
@@ -514,6 +540,7 @@
 const strates = document.querySelectorAll('.nav-arret');
 const arretsConteneur = document.getElementById('arrets');
 const jauge = document.getElementById('jaugeRemplie');
+const wagonnet = document.getElementById('wagonnet');
 const profondeurTxt = document.getElementById('profondeur');
 
 strates.forEach((s, i) => {
@@ -530,7 +557,9 @@ const points = arretsConteneur.querySelectorAll('.arret');
 function maj(){
   const h = document.documentElement;
   const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
-  jauge.style.height = Math.min(100, Math.max(0, pct)) + '%';
+  const pctBornee = Math.min(100, Math.max(0, pct));
+  jauge.style.height = pctBornee + '%';
+  wagonnet.style.bottom = pctBornee + '%';
 
   let profondeurActuelle = 0, indexActif = -1;
   strates.forEach((s, i) => {
