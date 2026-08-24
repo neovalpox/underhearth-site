@@ -55,6 +55,14 @@
   @keyframes sweep7{ from{background-position-x:0%} to{background-position-x:100%} }
   @keyframes sweep6{ from{background-position-x:0%} to{background-position-x:100%} }
   @keyframes sweep4{ from{background-position-x:0%} to{background-position-x:100%} }
+  /* Chariots (cart_anim.png : 4 col x 3 lignes de 32 ; rangee 0 = vers
+     la droite). Un jeu de keyframes par taille : le pas doit tomber sur
+     une case entiere, ce que le % ne garantit pas avec steps(4). */
+  @keyframes cart26{ from{background-position:0 0} to{background-position:-104px 0} }
+  @keyframes cart60{ from{background-position:0 0} to{background-position:-240px 0} }
+  @keyframes cart68{ from{background-position:0 0} to{background-position:-272px 0} }
+  @keyframes cart84{ from{background-position:0 0} to{background-position:-336px 0} }
+  @keyframes cart96{ from{background-position:0 0} to{background-position:-384px 0} }
 
   /* --- Rail de profondeur : la navigation EST la descente --- */
   .rail{
@@ -76,9 +84,9 @@
     position:absolute;left:50%;bottom:0%;width:26px;height:26px;
     transform:translate(-50%,50%);transition:bottom .1s linear;
     background-image:url('assets/icones/cart_anim.png');
-    background-size:400% 300%;background-position:0% 0%;
+    background-size:104px 78px;background-position:0 0;
     image-rendering:pixelated;image-rendering:crisp-edges;
-    animation:sweep4 .6s steps(4) infinite;
+    animation:cart26 .6s steps(4) infinite;
     filter:drop-shadow(0 0 4px rgba(240,168,60,.5));
   }
   .rail .arrets{position:absolute;inset:0}
@@ -193,14 +201,15 @@
   .galerie-vivante .chariot{
     position:absolute;bottom:48px;left:-120px;width:84px;height:84px;z-index:3;
     background-image:url('assets/icones/cart_anim.png');
-    background-size:400% 300%;background-position:0% 0%;
+    background-size:336px 252px;background-position:0 0;
     image-rendering:pixelated;image-rendering:crisp-edges;
     filter:drop-shadow(0 6px 4px rgba(0,0,0,.7));
-    animation:sweep4 .5s steps(4) infinite, traverse 9s linear infinite;
+    animation:cart84 .5s steps(4) infinite, traverse 9s linear infinite;
   }
   .galerie-vivante .chariot.retour{
     width:60px;height:60px;bottom:52px;opacity:.75;
-    animation:sweep4 .45s steps(4) infinite, traverse 13s linear 4s infinite;
+    background-size:240px 180px;
+    animation:cart60 .45s steps(4) infinite, traverse 13s linear 4s infinite;
   }
   @keyframes traverse{ from{left:-130px} to{left:104%} }
   /* Les mineurs au travail : silhouettes des vraies planches du jeu,
@@ -404,14 +413,15 @@
   .diorama-rails .chariot{
     position:absolute;bottom:30px;left:-100px;width:96px;height:96px;z-index:3;
     background-image:url('assets/icones/cart_anim.png');
-    background-size:400% 300%;background-position:0% 0%;
+    background-size:384px 288px;background-position:0 0;
     image-rendering:pixelated;image-rendering:crisp-edges;
     filter:drop-shadow(0 6px 4px rgba(0,0,0,.7));
-    animation:sweep4 .5s steps(4) infinite, trajet 7s linear infinite;
+    animation:cart96 .5s steps(4) infinite, trajet 7s linear infinite;
   }
   .diorama-rails .chariot.deux{
     width:68px;height:68px;bottom:44px;opacity:.8;
-    animation:sweep4 .4s steps(4) infinite, trajet2 10s linear infinite;
+    background-size:272px 204px;
+    animation:cart68 .4s steps(4) infinite, trajet2 10s linear infinite;
     animation-delay:0s, 2.4s;
   }
   @keyframes trajet{ 0%{left:-100px} 100%{left:100%} }
