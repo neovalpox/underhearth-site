@@ -20,36 +20,43 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
+  /* ============================================================
+     UNDERHEARTH — le site est une DESCENTE. Tout le decor est en
+     pixel-art vivant : les vrais sprites du jeu, animes en CSS
+     (steps() sur les planches), zero image peinte. Chaque strate a
+     sa roche, et l'on s'enfonce du foyer au coeur cristallin.
+     ============================================================ */
   :root{
     --dirt:#5a3d24; --stone:#4a4238; --amber:#f0a83c; --crystal:#7dd8ff;
     --volcanic:#ff5a3c; --bg:#0a0603; --text:#f3e9dc; --text-dim:#b8a58f;
+    /* La roche de chaque strate : la teinte raconte la profondeur. */
+    --roche-terre:#2b1a0d; --roche-pierre:#26221d; --roche-granite:#211a20;
+    --roche-cristal:#101a26; --roche-volcan:#210f0b;
+    --curseur-pioche: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Cline%20x1='8'%20y1='25'%20x2='24'%20y2='8'%20stroke='%23241005'%20stroke-width='6'%20stroke-linecap='round'/%3E%3Cline%20x1='8'%20y1='25'%20x2='24'%20y2='8'%20stroke='%23f0a83c'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Cpath%20d='M17%2010%20L24%202%20L31%2010%20L24%2017%20Z'%20fill='%23dfe6ea'%20stroke='%23241005'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3C/svg%3E") 24 8;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  html{max-width:100%;overflow-x:hidden}
+  html{scroll-behavior:smooth;max-width:100%;overflow-x:hidden}
   body{
     background:var(--bg); color:var(--text); max-width:100%;
     font-family:'Rubik',system-ui,sans-serif; line-height:1.6; overflow-x:hidden;
-    cursor:default; position:relative;
+    cursor:var(--curseur-pioche), default; position:relative;
   }
+  a, button, .arret, .zone-creuse{cursor:var(--curseur-pioche), pointer}
   .conteneur{max-width:1000px;margin:0 auto;padding:0 28px}
   img{max-width:100%;display:block}
   a{color:inherit}
   ::selection{background:var(--amber);color:#2a1a05}
+  .pixel{font-family:'Press Start 2P',monospace; line-height:1.5}
+  .px{image-rendering:pixelated;image-rendering:crisp-edges}
 
-  .pixel{
-    font-family:'Press Start 2P',monospace; line-height:1.5;
-  }
-  .titre-jeu{
-    font-size:clamp(26px,6vw,54px); color:#fff;
-    -webkit-text-stroke:3px #241005;
-    text-shadow:
-      3px 3px 0 #241005, -3px 3px 0 #241005, 3px -3px 0 #241005, -3px -3px 0 #241005,
-      0 8px 0 rgba(0,0,0,.5), 0 0 40px rgba(240,168,60,.5);
-    letter-spacing:.02em;
-  }
+  /* Tout sprite anime du site passe par ces deux briques : une planche en
+     background, un sweep de colonnes en steps(). */
+  .sprite{background-repeat:no-repeat;image-rendering:pixelated;image-rendering:crisp-edges;will-change:background-position}
+  @keyframes sweep7{ from{background-position-x:0%} to{background-position-x:100%} }
+  @keyframes sweep6{ from{background-position-x:0%} to{background-position-x:100%} }
+  @keyframes sweep4{ from{background-position-x:0%} to{background-position-x:100%} }
 
-  /* --- Rail de profondeur : navigation en forme de coupe de mine --- */
+  /* --- Rail de profondeur : la navigation EST la descente --- */
   .rail{
     position:fixed;top:0;left:0;bottom:0;width:64px;z-index:100;
     background:linear-gradient(180deg,#1a1008,#0a0603);
@@ -64,22 +71,20 @@
     background:linear-gradient(180deg, var(--amber), var(--volcanic));height:0%;
     transition:height .1s linear;
   }
-  /* Le wagonnet roule le long des rails, a la meme hauteur que la jauge —
-     un petit clin d'oeil vivant plutot qu'une simple barre de progression. */
+  /* Le wagonnet roule le long de la jauge — le site se parcourt EN wagonnet. */
   .rail .wagonnet{
     position:absolute;left:50%;bottom:0%;width:26px;height:26px;
     transform:translate(-50%,50%);transition:bottom .1s linear;
     background-image:url('assets/icones/cart_anim.png');
     background-size:400% 300%;background-position:0% 0%;
     image-rendering:pixelated;image-rendering:crisp-edges;
-    animation:roulement .6s steps(4) infinite;
+    animation:sweep4 .6s steps(4) infinite;
     filter:drop-shadow(0 0 4px rgba(240,168,60,.5));
   }
-  @keyframes roulement{ to{ background-position:100% 0%; } }
   .rail .arrets{position:absolute;inset:0}
   .rail .arret{
     position:absolute;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;
-    border-radius:50%;background:#241005;border:2px solid rgba(240,168,60,.4);cursor:pointer;
+    border-radius:50%;background:#241005;border:2px solid rgba(240,168,60,.4);
     transition:border-color .2s, background .2s;
   }
   .rail .arret.actif{background:var(--amber);border-color:#fff;box-shadow:0 0 12px var(--amber)}
@@ -88,74 +93,190 @@
     writing-mode:vertical-rl;letter-spacing:.1em;
   }
   @media (max-width:720px){ .rail{width:40px} .rail .logo-mini{width:24px} }
-
   main{margin-left:64px}
   @media (max-width:720px){ main{margin-left:40px} }
 
-  /* --- Hero --- */
+  /* ============================================================
+     LE HERO : une coupe de mine VIVANTE, construite entierement en
+     pixels — la roche en aplats, les vrais sprites du jeu au
+     travail. Pas une image peinte : le jeu lui-meme, en coupe.
+     ============================================================ */
   .hero{
     position:relative;min-height:100vh;display:flex;flex-direction:column;
     align-items:center;justify-content:center;text-align:center;overflow:hidden;
-    background:url('assets/bg_mine.jpg') center/cover;
-  }
-  .hero::before{
-    content:'';position:absolute;inset:0;
     background:
-      radial-gradient(ellipse 45% 40% at 50% 46%, rgba(240,168,60,.16) 0%, transparent 70%),
-      radial-gradient(ellipse 70% 60% at 50% 46%, rgba(5,3,1,.72) 0%, rgba(5,3,1,.4) 55%, rgba(5,3,1,.2) 75%),
-      linear-gradient(180deg, rgba(10,6,3,.75) 0%, rgba(10,6,3,.45) 32%, rgba(10,6,3,.55) 68%, var(--bg) 100%);
+      repeating-linear-gradient(180deg, rgba(0,0,0,.10) 0px, rgba(0,0,0,.10) 4px, transparent 4px, transparent 9px),
+      radial-gradient(ellipse 70% 45% at 50% 40%, rgba(240,168,60,.10), transparent 70%),
+      linear-gradient(180deg, #1c1109 0%, var(--roche-terre) 34%, #20150c 62%, #170e08 100%);
+  }
+  /* Les poches de cristal qui respirent dans la paroi. */
+  .hero .gemme-paroi{
+    position:absolute;width:26px;height:26px;z-index:1;
+    filter:drop-shadow(0 0 7px currentColor);
+    animation:scintille 2.8s ease-in-out infinite;
+  }
+  @keyframes scintille{ 0%,100%{opacity:.4;transform:scale(.88)} 50%{opacity:1;transform:scale(1)} }
+  /* Les lucioles de mine : la poussiere qui accroche la lumiere. */
+  .hero .poussiere{
+    position:absolute;width:4px;height:4px;background:var(--amber);border-radius:1px;
+    opacity:0;animation:monte linear infinite;z-index:1;
+  }
+  @keyframes monte{
+    0%{transform:translateY(0);opacity:0}
+    12%{opacity:.7} 82%{opacity:.5}
+    100%{transform:translateY(-46vh);opacity:0}
   }
   .hero-contenu{
-    position:relative;z-index:2;padding:38px 32px;width:min(640px,92vw);
-    min-width:0;box-sizing:border-box;overflow-wrap:break-word;
-    background:rgba(6,4,2,.42);border-radius:14px;backdrop-filter:blur(3px);
+    position:relative;z-index:3;padding:38px 32px;width:min(680px,92vw);
+    min-width:0;overflow-wrap:break-word;
   }
-  @media (max-width:480px){
-    .hero-contenu{padding:26px 18px}
+  .hero .logo-jeu{
+    width:min(430px,80vw);margin:0 auto 8px;
+    filter:drop-shadow(0 6px 0 rgba(0,0,0,.55)) drop-shadow(0 0 34px rgba(240,168,60,.35));
+    animation:atterrit .7s cubic-bezier(.2,1.6,.4,1) both;
   }
+  @keyframes atterrit{ from{transform:translateY(-42px) scale(.94);opacity:0} to{transform:none;opacity:1} }
   .hero .sous-titre{
     font-family:'Press Start 2P',monospace;font-size:clamp(9px,1.6vw,13px);
-    letter-spacing:.25em;text-transform:uppercase;color:var(--crystal);margin:22px 0 20px;
+    letter-spacing:.25em;text-transform:uppercase;color:var(--crystal);margin:18px 0 20px;
     text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 18px rgba(125,216,255,.35);
+    animation:apparait .8s .25s both;
   }
   .hero p.pitch{
-    color:#fff;font-size:17px;margin-bottom:36px;
-    text-shadow:0 2px 10px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.9);
+    color:#fff;font-size:17px;margin-bottom:34px;
+    text-shadow:0 2px 10px rgba(0,0,0,.95);
+    animation:apparait .8s .4s both;
   }
-  .boutons-hero{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .boutons-hero{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:apparait .8s .55s both}
+  @keyframes apparait{ from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
   .btn{
     padding:16px 32px;border-radius:8px;font-weight:800;font-size:15px;
     text-decoration:none;letter-spacing:.02em;transition:transform .15s, box-shadow .15s;
-    border:2px solid transparent; cursor:pointer;
+    border:2px solid transparent;
   }
   .btn:hover{transform:translateY(-2px) scale(1.02)}
   .btn-principal{background:var(--amber);color:#2a1a05;box-shadow:0 6px 0 #9c6118, 0 10px 26px rgba(240,168,60,.35)}
   .btn-principal:active{transform:translateY(2px);box-shadow:0 2px 0 #9c6118}
-  .btn-secondaire{background:transparent;border-color:rgba(255,255,255,.3);color:var(--text)}
-
-  /* --- Bouton video (pas d'autoplay en boucle : un vrai geste pour lancer) --- */
+  .btn-secondaire{background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.3);color:var(--text)}
   .voir-video{
     display:inline-flex;align-items:center;gap:10px;margin-top:26px;
     background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);border-radius:40px;
     padding:10px 20px 10px 14px;font-size:13px;font-weight:600;
+    animation:apparait .8s .7s both;
   }
   .voir-video .rond{
     width:34px;height:34px;border-radius:50%;background:var(--amber);
     display:flex;align-items:center;justify-content:center;color:#2a1a05;font-size:14px;
   }
-  .miniature-gif{
-    width:44px;height:28px;object-fit:cover;border-radius:6px;
-    border:1px solid rgba(255,255,255,.25);
+  .miniature-gif{width:44px;height:28px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,.25)}
+
+  /* --- La galerie du bas du hero : une vraie GALERIE de mine.
+     Sol, voie ferree, wagonnets qui passent, mineurs a l'ouvrage,
+     lanternes qui vacillent — le jeu qui joue tout seul. --- */
+  .galerie-vivante{
+    position:absolute;left:0;right:0;bottom:0;height:190px;z-index:2;overflow:hidden;
+    background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.35) 30%, #140c06 62%, #0f0804 100%);
   }
+  .galerie-vivante::after{ /* le sol de la galerie */
+    content:'';position:absolute;left:0;right:0;bottom:0;height:44px;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.22) 0 6px, transparent 6px 14px),
+      linear-gradient(180deg,#241608,#180e06);
+    border-top:3px solid #37220f;
+  }
+  .galerie-vivante .voie{
+    position:absolute;left:0;right:0;bottom:38px;height:24px;z-index:2;
+    background-image:url('assets/icones/rail_h.png');
+    background-repeat:repeat-x;background-size:24px 24px;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+  }
+  .galerie-vivante .chariot{
+    position:absolute;bottom:48px;left:-120px;width:84px;height:84px;z-index:3;
+    background-image:url('assets/icones/cart_anim.png');
+    background-size:400% 300%;background-position:0% 0%;
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    filter:drop-shadow(0 6px 4px rgba(0,0,0,.7));
+    animation:sweep4 .5s steps(4) infinite, traverse 9s linear infinite;
+  }
+  .galerie-vivante .chariot.retour{
+    width:60px;height:60px;bottom:52px;opacity:.75;
+    animation:sweep4 .45s steps(4) infinite, traverse 13s linear 4s infinite;
+  }
+  @keyframes traverse{ from{left:-130px} to{left:104%} }
+  /* Les mineurs au travail : silhouettes des vraies planches du jeu,
+     teintees lanterne, chacun a son rythme. */
+  .galerie-vivante .ouvrier{
+    position:absolute;bottom:54px;width:96px;height:96px;z-index:2;
+    background-image:url('assets/silhouette_pick.png');
+    background-repeat:no-repeat;background-size:2688px 1536px;
+    background-position:-123px -138px; /* rangee "right", cadree au mineur */
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    filter:brightness(.85) sepia(.5) saturate(1.6) hue-rotate(-12deg) drop-shadow(0 0 6px rgba(240,168,60,.35));
+    animation:ouvrierDroite 1.05s steps(7) infinite;
+  }
+  @keyframes ouvrierDroite{ from{background-position:-123px -138px} to{background-position:-2811px -138px} }
+  .galerie-vivante .ouvrier.gauche{animation-name:ouvrierGauche}
+  @keyframes ouvrierGauche{ from{background-position:-123px -522px} to{background-position:-2811px -522px} }
+  .galerie-vivante .lanterne{
+    position:absolute;top:8px;width:22px;height:auto;z-index:2;
+    filter:drop-shadow(0 0 12px rgba(240,168,60,.9));
+    image-rendering:pixelated;image-rendering:crisp-edges;
+    animation:vacille 2.2s ease-in-out infinite;
+    transform-origin:top center;
+  }
+  .galerie-vivante .lanterne.deux{animation-delay:-.9s}
+  .galerie-vivante .lanterne.trois{animation-delay:-1.5s}
+  @keyframes vacille{ 0%,100%{opacity:1;transform:rotate(-2deg)} 50%{opacity:.72;transform:rotate(2deg)} }
+  .galerie-vivante .etai{
+    position:absolute;bottom:44px;width:24px;height:120px;z-index:1;
+    background-image:url('assets/icones/support.png');
+    background-size:24px 24px;background-repeat:repeat-y;
+    image-rendering:pixelated;image-rendering:crisp-edges;opacity:.85;
+  }
+  @media (max-width:720px){
+    .galerie-vivante{height:150px}
+    .galerie-vivante .ouvrier{width:56px;height:56px}
+  }
+
   .modal-video{
     position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.9);
     display:none;align-items:center;justify-content:center;padding:20px;
   }
   .modal-video.actif{display:flex}
   .modal-video video{max-width:900px;width:100%;border-radius:10px;border:2px solid var(--amber)}
-  .fermer-modal{position:absolute;top:24px;right:24px;font-size:28px;cursor:pointer;color:#fff}
+  .fermer-modal{position:absolute;top:24px;right:24px;font-size:28px;cursor:var(--curseur-pioche), pointer;color:#fff}
 
-  /* --- Strates (recit de descente) --- */
+  /* ============================================================
+     LES FRONTS DE TAILLE : entre deux sections, la roche change.
+     Une bande dentee (vraies dents de pixel en clip-path), cliquable
+     pour creuser — et la teinte annonce la strate suivante.
+     ============================================================ */
+  .zone-creuse{
+    position:relative;height:52px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--roche, #1a0f06);
+    transition:filter .2s;
+    clip-path:polygon(0 0, 100% 0, 100% calc(100% - 8px), 96% 100%, 92% calc(100% - 8px), 88% 100%, 84% calc(100% - 8px), 80% 100%, 76% calc(100% - 8px), 72% 100%, 68% calc(100% - 8px), 64% 100%, 60% calc(100% - 8px), 56% 100%, 52% calc(100% - 8px), 48% 100%, 44% calc(100% - 8px), 40% 100%, 36% calc(100% - 8px), 32% 100%, 28% calc(100% - 8px), 24% 100%, 20% calc(100% - 8px), 16% 100%, 12% calc(100% - 8px), 8% 100%, 4% calc(100% - 8px), 0 100%);
+  }
+  .zone-creuse:hover{filter:brightness(1.35)}
+  .zone-creuse .texte-creuse{
+    font-size:8px;letter-spacing:.15em;color:var(--text-dim);
+    opacity:.55;transition:opacity .2s, transform .2s, color .2s;
+  }
+  .zone-creuse:hover .texte-creuse{opacity:1;color:var(--amber);transform:scale(1.06)}
+  .eclats{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:2}
+  .eclat{
+    position:absolute;left:var(--x);top:var(--y);border-radius:2px;
+    transform:translate(-50%,-50%);animation:eclate .55s ease-out forwards;
+  }
+  .eclat.tri{clip-path:polygon(50% 0%, 0% 100%, 100% 100%);border-radius:0}
+  @keyframes eclate{
+    0%{transform:translate(-50%,-50%) translate(0,0) rotate(0deg);opacity:1}
+    100%{transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}
+  }
+
+  /* --- Strates (recit de descente) : les captures du jeu, encadrees
+     de la roche de leur profondeur --- */
   .strate{
     position:relative;min-height:100vh;display:flex;align-items:center;
     background-size:cover;background-position:center;background-attachment:fixed;
@@ -166,7 +287,7 @@
   }
   .strate .panneau{
     position:relative;z-index:1;max-width:440px;margin:60px;padding:30px 32px;
-    background:rgba(10,6,3,.6);backdrop-filter:blur(4px);
+    background:rgba(10,6,3,.68);backdrop-filter:blur(4px);
     border:2px solid rgba(240,168,60,.3);border-radius:4px;
     box-shadow:0 12px 40px rgba(0,0,0,.5);
   }
@@ -189,55 +310,57 @@
     transition:border-color .2s, transform .2s;
   }
   .carte-jeu:hover{border-color:var(--amber);transform:translateY(-4px)}
+  .carte-jeu:hover .icone img{animation:sursaute .45s cubic-bezier(.3,1.8,.5,1)}
+  @keyframes sursaute{ 0%{transform:none} 40%{transform:translateY(-7px) scale(1.15)} 100%{transform:none} }
   .carte-jeu .icone{
     width:54px;height:54px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;
     background:rgba(240,168,60,.1);border:2px solid rgba(240,168,60,.35);border-radius:6px;
   }
-  .carte-jeu .icone img{
-    width:30px;height:30px;image-rendering:pixelated;image-rendering:crisp-edges;
-  }
+  .carte-jeu .icone img{width:30px;height:30px;image-rendering:pixelated;image-rendering:crisp-edges}
   .carte-jeu h3{font-size:17px;margin-bottom:8px;font-weight:700}
   .carte-jeu p{color:var(--text-dim);font-size:14px}
 
-  /* --- Createur de personnage : vrais calques du jeu, composes en CSS --- */
+  /* --- Createur de personnage : vrais calques du jeu + MELANGEUR --- */
   .createur{padding:20px 0 110px;text-align:center}
   .createur h2{font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
-  .createur .intro{color:var(--text-dim);max-width:560px;margin:0 auto 46px}
-  .grille-perso{display:flex;flex-wrap:wrap;justify-content:center;gap:22px}
+  .createur .intro{color:var(--text-dim);max-width:560px;margin:0 auto 40px}
+  .grille-perso{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-bottom:30px}
   .perso{
     position:relative;isolation:isolate;width:128px;height:128px;background:rgba(255,255,255,.03);
     border:2px solid rgba(240,168,60,.25);border-radius:8px;overflow:hidden;
     transition:border-color .2s, transform .2s;
   }
   .perso:hover{border-color:var(--amber);transform:translateY(-4px)}
-  /* Calques ANIMES : les planches viennent de layers/pick/ (verifie : 448x256,
-     grille 7 colonnes x 4 lignes de 64x64 — right/left/down/up). On n'affiche
-     que la ligne "down" (face camera, ligne 2/4 -> y=66.667%) et on balaie les
-     7 colonnes en boucle via steps(7), meme technique que .chariot plus bas.
-     background-size:700% 400% fait tenir une frame 64x64 exactement dans la
-     boite 128x128 (elle est affichee a 2x, comme avant avec idle). */
+  /* Calques ANIMES (planches pick 448x256, 7 col x 4 lignes de 64) : ligne
+     "down" (66.667%), balayee en steps(7). Chaque mineur a son tempo. */
   .perso .calque{
     position:absolute;top:0;left:0;width:100%;height:100%;
-    background-repeat:no-repeat;background-position:0% 66.667%;background-size:700% 400%;
+    /* Echelle x6 en PIXELS : la planche fait 448x256, le mineur ~12 px
+       au centre de sa frame de 64. En pourcentage il restait une puce ;
+       ici la frame est agrandie a 384 et cadree sur le bonhomme. */
+    background-repeat:no-repeat;background-size:2688px 1536px;
+    background-position:-107px -890px;
     image-rendering:pixelated;image-rendering:crisp-edges;
-    animation:sweepFrame 1.05s steps(7) infinite;
+    animation:sweepPickPx 1.05s steps(7) infinite;
   }
-  /* Les 6 mineurs ne sont pas synchronises : un delai negatif differe par
-     personnage donne un effet plus vivant/naturel qu'un unisson parfait. */
   .perso:nth-child(2) .calque{animation-delay:-.16s}
   .perso:nth-child(3) .calque{animation-delay:-.34s}
   .perso:nth-child(4) .calque{animation-delay:-.52s}
   .perso:nth-child(5) .calque{animation-delay:-.7s}
   .perso:nth-child(6) .calque{animation-delay:-.88s}
-  @keyframes sweepFrame{ from{background-position:0% 66.667%} to{background-position:100% 66.667%} }
-
-  /* --- Diorama de rails : 100% pixel-art, aucune image peinte (c'est ce qui
-     jurait avant) — coupe de roche en aplats de couleur, façon vrai rendu de
-     jeu, avec les vrais sprites (rail_h.png, cart_anim.png, support.png,
-     lamp.png) beaucoup plus grands et un cadre en dents de pixel. --- */
-  .diorama-rails{
-    position:relative;margin:70px auto;max-width:1000px;padding:0 20px;
+  @keyframes sweepPickPx{ from{background-position:-107px -890px} to{background-position:-2795px -890px} }
+  .btn-melange{
+    display:inline-flex;align-items:center;gap:10px;
+    background:rgba(240,168,60,.12);border:2px solid rgba(240,168,60,.45);
+    color:var(--text);border-radius:8px;padding:13px 26px;font-weight:800;font-size:14px;
+    font-family:'Rubik',sans-serif;transition:transform .15s, background .2s;
   }
+  .btn-melange:hover{transform:translateY(-2px);background:rgba(240,168,60,.22)}
+  .btn-melange:active{transform:translateY(1px)}
+  .btn-melange img{width:20px;height:20px;image-rendering:pixelated}
+
+  /* --- Diorama de rails : 100% pixel-art, avec les vrais sprites --- */
+  .diorama-rails{position:relative;margin:70px auto;max-width:1000px;padding:0 20px}
   .diorama-rails .cadre{
     position:relative;height:240px;overflow:hidden;border-radius:4px;
     background:
@@ -246,14 +369,9 @@
     border:4px solid var(--amber);
     box-shadow:0 0 0 2px #241005, inset 0 0 40px rgba(0,0,0,.6);
   }
-  /* Dents de pixel aux 4 coins : renforce le look "cadre retro" plutot
-     qu'un simple rectangle arrondi web. */
-  .diorama-rails .dent{
-    position:absolute;width:10px;height:10px;background:var(--bg);z-index:5;
-  }
+  .diorama-rails .dent{position:absolute;width:10px;height:10px;background:var(--bg);z-index:5}
   .diorama-rails .dent.tl{top:-4px;left:-4px} .diorama-rails .dent.tr{top:-4px;right:-4px}
   .diorama-rails .dent.bl{bottom:-4px;left:-4px} .diorama-rails .dent.br{bottom:-4px;right:-4px}
-
   .diorama-rails .legende{
     position:absolute;top:14px;left:14px;z-index:6;
     font-family:'Press Start 2P',monospace;font-size:clamp(8px,2vw,12px);letter-spacing:.04em;
@@ -265,14 +383,14 @@
     filter:drop-shadow(0 0 5px currentColor);
     animation:scintille 2.6s ease-in-out infinite;
   }
-  @keyframes scintille{ 0%,100%{opacity:.55;transform:scale(.9)} 50%{opacity:1;transform:scale(1)} }
   .diorama-rails .poteau{
     position:absolute;bottom:78px;width:24px;height:96px;
-    background-image:url('assets/icones/support.png');background-size:100% 100%;
-    image-rendering:pixelated;image-rendering:crisp-edges;
+    background-image:url('assets/icones/support.png');
+    background-size:24px 24px;background-repeat:repeat-y;
+    image-rendering:pixelated;image-rendering:crisp-edges;opacity:.85;
   }
   .diorama-rails .lanterne-rail{
-    position:absolute;bottom:164px;width:24px;height:auto;
+    position:absolute;top:6px;width:24px;height:auto;transform-origin:top center;
     filter:drop-shadow(0 0 10px rgba(240,168,60,.9));
     image-rendering:pixelated;image-rendering:crisp-edges;
     animation:vacille 2.2s ease-in-out infinite;
@@ -280,7 +398,7 @@
   .diorama-rails .voie{
     position:absolute;left:0;right:0;bottom:66px;height:24px;z-index:2;
     background-image:url('assets/icones/rail_h.png');
-    background-repeat:repeat-x;background-size:64px 24px;
+    background-repeat:repeat-x;background-size:24px 24px;
     image-rendering:pixelated;image-rendering:crisp-edges;
   }
   .diorama-rails .chariot{
@@ -289,18 +407,17 @@
     background-size:400% 300%;background-position:0% 0%;
     image-rendering:pixelated;image-rendering:crisp-edges;
     filter:drop-shadow(0 6px 4px rgba(0,0,0,.7));
-    animation:roulement .5s steps(4) infinite, trajet 7s linear infinite;
+    animation:sweep4 .5s steps(4) infinite, trajet 7s linear infinite;
   }
   .diorama-rails .chariot.deux{
-    width:68px;height:68px;bottom:44px;
-    animation:roulement .4s steps(4) infinite, trajet2 10s linear infinite;
+    width:68px;height:68px;bottom:44px;opacity:.8;
+    animation:sweep4 .4s steps(4) infinite, trajet2 10s linear infinite;
     animation-delay:0s, 2.4s;
-    opacity:.8;
   }
-  @keyframes trajet{ 0%{ left:-100px; } 100%{ left:100%; } }
-  @keyframes trajet2{ 0%{ left:-80px; } 100%{ left:100%; } }
+  @keyframes trajet{ 0%{left:-100px} 100%{left:100%} }
+  @keyframes trajet2{ 0%{left:-80px} 100%{left:100%} }
 
-  /* --- Systemes : liste complete, esprit "fiche technique" plutot que marketing --- */
+  /* --- Systemes : fiche technique --- */
   .systemes{padding:20px 0 110px}
   .systemes h2{text-align:center;font-size:clamp(24px,4vw,38px);margin-bottom:10px;font-weight:800}
   .systemes > .conteneur > p.intro{color:var(--text-dim);text-align:center;max-width:520px;margin:0 auto 50px}
@@ -344,23 +461,31 @@
   footer{
     padding:40px 24px;text-align:center;color:var(--text-dim);font-size:13px;
     border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;
-    align-items:center;gap:10px;
+    align-items:center;gap:10px;position:relative;overflow:hidden;
   }
   footer .lanterne{
     width:20px;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;
     filter:drop-shadow(0 0 6px rgba(240,168,60,.7));animation:vacille 2.4s ease-in-out infinite;
   }
-  @keyframes vacille{ 0%,100%{opacity:1} 50%{opacity:.7} }
 
-  /* --- Fond de mine continu : une seule couche derriere TOUT le site
-     (au lieu d'un fond par bloc), du haut jusqu'en bas, avec un effet de
-     parallaxe classique (background-attachment:fixed — deja utilise par
-     .strate plus haut, meme technique). Reste tres sombre/discret : elle
-     ne doit jamais concurrencer le texte des sections existantes. --- */
-  .fond-mine{
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    z-index:-1;overflow:hidden;pointer-events:none;
+  /* --- Le rat vagabond : il traverse le bas de l'ecran de loin en loin,
+     comme dans l'atelier. Vraie planche du jeu (192x192, 4 col x 4 dir). --- */
+  .rat-vagabond{
+    position:fixed;bottom:0;left:-70px;width:64px;height:64px;z-index:90;
+    background-image:url('assets/icones/rat_moving.png');
+    background-repeat:no-repeat;background-size:1152px 1152px;
+    background-position:-112px -112px; /* rangee profil vers la droite */
+    image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none;
+    animation:ratPas .4s steps(4) infinite, ratTraverse 26s linear infinite;
+    opacity:.9;
   }
+  @keyframes ratPas{ from{background-position:-112px -112px} to{background-position:-1264px -112px} }
+  @keyframes ratTraverse{
+    0%{left:-70px} 42%{left:104%} 42.001%{left:104%} 100%{left:104%}
+  }
+
+  /* --- Fond de mine continu derriere tout le site --- */
+  .fond-mine{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden;pointer-events:none}
   .fond-mine .texture-mine{
     position:absolute;inset:0;background-attachment:fixed;background-position:center top;
     background-image:
@@ -368,15 +493,6 @@
       radial-gradient(ellipse 65% 30% at 50% 0%, rgba(240,168,60,.05), transparent 70%),
       linear-gradient(180deg, #170d06 0%, #120a05 35%, #0c0603 70%, #0a0603 100%);
   }
-  /* Petites silhouettes de mineurs qui creusent/marchent en boucle, en
-     arriere-plan — vrais sprites du jeu (assets/silhouette_pick.png et
-     silhouette_walk.png, memes planches 64x64 x4 directions que les
-     calques du createur), assombries/desaturees et peu opaques (un noir
-     pur etait invisible sur un fond deja tres sombre — teinte discrete
-     mais qui reste perceptible). Le texte reste toujours lisible : il
-     n'est jamais affiche a nu sur ce fond, toujours dans un panneau avec
-     son propre arriere-plan. Cout de rendu minime meme a une dizaine
-     d'exemplaires (juste un sweep de background-position). */
   .mineur-fond{
     position:absolute;width:44px;height:44px;opacity:.8;
     filter:brightness(.6) drop-shadow(0 0 4px rgba(240,168,60,.45));
@@ -385,43 +501,19 @@
   }
   .mineur-fond.pioche{
     background-image:url('assets/silhouette_pick.png');
-    background-size:700% 400%;background-position:0% 66.667%;
-    animation:sweepFrame 1.05s steps(7) infinite;
+    background-size:1344px 768px;background-position:-64px -455px;
+    animation:fondPioche 1.05s steps(7) infinite;
   }
+  @keyframes fondPioche{ from{background-position:-64px -455px} to{background-position:-1408px -455px} }
   .mineur-fond.marche{
     background-image:url('assets/silhouette_walk.png');
-    background-size:600% 400%;background-position:0% 66.667%;
-    animation:sweepFrame .85s steps(6) infinite;
+    background-size:1152px 768px;background-position:-64px -455px;
+    animation:fondMarche .85s steps(6) infinite;
   }
+  @keyframes fondMarche{ from{background-position:-64px -455px} to{background-position:-1216px -455px} }
 
-  /* --- "Creuse pour continuer" : entre chaque section, une fine bande
-     cliquable qui transforme le scroll en petit geste actif — un AJOUT
-     au scroll normal (molette/barre/tactile/historique), jamais un
-     remplacement : sans JS ou sans souris, c'est juste une bande inerte
-     qui laisse le defilement classique parfaitement intact. --- */
-  .zone-creuse{
-    position:relative;height:44px;overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(180deg, rgba(0,0,0,.32), rgba(0,0,0,.5));
-    border-top:1px dashed rgba(240,168,60,.3);border-bottom:1px dashed rgba(240,168,60,.3);
-    transition:background .2s;
-    cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Cline%20x1='8'%20y1='25'%20x2='24'%20y2='8'%20stroke='%23241005'%20stroke-width='6'%20stroke-linecap='round'/%3E%3Cline%20x1='8'%20y1='25'%20x2='24'%20y2='8'%20stroke='%23f0a83c'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Cpath%20d='M17%2010%20L24%202%20L31%2010%20L24%2017%20Z'%20fill='%23dfe6ea'%20stroke='%23241005'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3C/svg%3E") 24 8, pointer;
-  }
-  .zone-creuse:hover{background:linear-gradient(180deg, rgba(240,168,60,.14), rgba(0,0,0,.45))}
-  .zone-creuse .texte-creuse{
-    font-size:8px;letter-spacing:.15em;color:var(--text-dim);
-    opacity:.55;transition:opacity .2s, transform .2s, color .2s;
-  }
-  .zone-creuse:hover .texte-creuse{opacity:1;color:var(--amber);transform:scale(1.06)}
-  .eclats{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:2}
-  .eclat{
-    position:absolute;left:var(--x);top:var(--y);border-radius:2px;
-    transform:translate(-50%,-50%);animation:eclate .55s ease-out forwards;
-  }
-  .eclat.tri{clip-path:polygon(50% 0%, 0% 100%, 100% 100%);border-radius:0}
-  @keyframes eclate{
-    0%{transform:translate(-50%,-50%) translate(0,0) rotate(0deg);opacity:1}
-    100%{transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   }
 </style>
 </head>
@@ -429,8 +521,7 @@
 
 <div class="fond-mine" aria-hidden="true">
   <div class="texture-mine"></div>
-  <div class="mineur-fond pioche" style="top:3%;left:18%"></div>
-  <div class="mineur-fond marche" style="top:14%;left:82%;animation-delay:-.3s"></div>
+  <div class="mineur-fond pioche" style="top:14%;left:82%"></div>
   <div class="mineur-fond pioche" style="top:26%;left:22%;animation-delay:-.5s"></div>
   <div class="mineur-fond marche" style="top:37%;left:78%;animation-delay:-.15s"></div>
   <div class="mineur-fond pioche" style="top:49%;left:16%;animation-delay:-.7s"></div>
@@ -439,6 +530,8 @@
   <div class="mineur-fond marche" style="top:83%;left:80%;animation-delay:-.6s"></div>
   <div class="mineur-fond pioche" style="top:93%;left:19%;animation-delay:-.85s"></div>
 </div>
+
+<div class="rat-vagabond" aria-hidden="true"></div>
 
 <aside class="rail">
   <img class="logo-mini" src="assets/logo.png" alt="">
@@ -453,8 +546,11 @@
 <main>
 
 <section class="hero nav-arret" id="surface" data-nav="Surface" data-depth="0">
+  <!-- Les poches de cristal dans la paroi (posees par le script, pour
+       varier sans alourdir le HTML) -->
+  <div id="paroi" aria-hidden="true"></div>
   <div class="hero-contenu">
-    <div class="titre-jeu pixel">UNDERHEARTH</div>
+    <img class="logo-jeu px" src="assets/logo.png" alt="Underhearth">
     <div class="sous-titre">Mine for your soul</div>
     <p class="pitch">
       Creuse une mine infinie, strate après strate. Récolte, améliore ton
@@ -469,9 +565,24 @@
       <span class="rond">▶</span> Regarder l'aperçu du jeu
     </div>
   </div>
+  <!-- La galerie vivante : le jeu qui joue tout seul en bas de l'ecran -->
+  <div class="galerie-vivante" aria-hidden="true">
+    <img class="lanterne" style="left:16%" src="assets/icones/lamp2.png" alt="">
+    <img class="lanterne deux" style="left:52%" src="assets/icones/lamp2.png" alt="">
+    <img class="lanterne trois" style="left:86%" src="assets/icones/lamp2.png" alt="">
+    <div class="etai" style="left:8%"></div>
+    <div class="etai" style="left:44%"></div>
+    <div class="etai" style="left:78%"></div>
+    <div class="ouvrier" style="left:12%"></div>
+    <div class="ouvrier gauche" style="left:64%;animation-delay:-.4s"></div>
+    <div class="ouvrier" style="left:88%;animation-delay:-.75s"></div>
+    <div class="voie"></div>
+    <div class="chariot"></div>
+    <div class="chariot retour"></div>
+  </div>
 </section>
 
-<section class="strate nav-arret" data-depth="40" data-nav="Village" style="background-image:url('assets/bg_village.jpg')">
+<section class="strate nav-arret" data-depth="40" data-nav="Village" data-roche="var(--roche-terre)" style="background-image:url('assets/bg_village.jpg')">
   <div class="panneau">
     <span class="etiquette">— 0 m · La surface</span>
     <h2>Ton village, ta base</h2>
@@ -480,7 +591,7 @@
   </div>
 </section>
 
-<section class="strate nav-arret" data-depth="180" data-nav="La mine" style="background-image:url('assets/bg_mine.jpg')">
+<section class="strate nav-arret" data-depth="180" data-nav="La mine" data-roche="var(--roche-pierre)" style="background-image:url('assets/bg_mine.jpg')">
   <div class="panneau">
     <span class="etiquette">— 180 m · La mine</span>
     <h2>Chaque coup de pioche compte</h2>
@@ -489,7 +600,7 @@
   </div>
 </section>
 
-<section class="strate nav-arret" data-depth="520" data-nav="Profondeurs" style="background-image:url('assets/bg_profond.jpg')">
+<section class="strate nav-arret" data-depth="520" data-nav="Profondeurs" data-roche="var(--roche-granite)" style="background-image:url('assets/bg_profond.jpg')">
   <div class="panneau">
     <span class="etiquette">— 520 m · Les profondeurs</span>
     <h2>Toujours plus loin</h2>
@@ -498,7 +609,7 @@
   </div>
 </section>
 
-<section class="strate nav-arret" data-depth="990" data-nav="Cristaux" style="background-image:url('assets/capsule_cristaux.png')">
+<section class="strate nav-arret" data-depth="990" data-nav="Cristaux" data-roche="var(--roche-cristal)" style="background-image:url('assets/capsule_cristaux.png')">
   <div class="panneau">
     <span class="etiquette">— 990 m · Le cœur cristallin</span>
     <h2>La richesse ultime</h2>
@@ -507,7 +618,7 @@
   </div>
 </section>
 
-<section class="features nav-arret" data-depth="1400" data-nav="Envies">
+<section class="features nav-arret" data-depth="1400" data-nav="Envies" data-roche="var(--roche-volcan)">
   <div class="conteneur">
     <h2>Trois envies, une seule pioche</h2>
     <p class="intro">Underhearth est construit autour de ce que tu as vraiment envie de ressentir en creusant.</p>
@@ -551,56 +662,17 @@
   </div>
 </section>
 
-<section class="createur nav-arret" data-depth="1600" data-nav="Ton mineur">
+<section class="createur nav-arret" data-depth="1600" data-nav="Ton mineur" data-roche="var(--roche-terre)">
   <div class="conteneur">
     <h2>Un mineur qui te ressemble</h2>
     <p class="intro">Peau, coiffure, couleur de cheveux, haut, pantalon, chaussures —
     chaque choix est indépendant. 87 480 combinaisons possibles, et ton allure
     suit jusqu'en coopératif.</p>
-    <div class="grille-perso">
-      <div class="perso">
-        <div class="calque" style="background-image:url('assets/perso/body_light.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/pants_black.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shoes_brown.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shirt_red.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/hair_short_hair_black.png')"></div>
-      </div>
-      <div class="perso">
-        <div class="calque" style="background-image:url('assets/perso/body_dark.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/pants_white.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shoes_black.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shirt_blue_light.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/hair_spikey_blonde.png')"></div>
-      </div>
-      <div class="perso">
-        <div class="calque" style="background-image:url('assets/perso/body_brown.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/pants_brown.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shoes_orange.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shirt_green_light.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/hair_pony_tail_pink.png')"></div>
-      </div>
-      <div class="perso">
-        <div class="calque" style="background-image:url('assets/perso/body_light.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/pants_blue_light.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shoes_white.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shirt_yellow.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/hair_big_bun_purple.png')"></div>
-      </div>
-      <div class="perso">
-        <div class="calque" style="background-image:url('assets/perso/body_dark.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/pants_green_light.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shoes_black.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shirt_orange.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/hair_short_hair_white.png')"></div>
-      </div>
-      <div class="perso">
-        <div class="calque" style="background-image:url('assets/perso/body_brown.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/pants_white.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shoes_brown.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/shirt_red.png')"></div>
-        <div class="calque" style="background-image:url('assets/perso/hair_spikey_blonde.png')"></div>
-      </div>
-    </div>
+    <div class="grille-perso" id="grillePerso"></div>
+    <button class="btn-melange" id="melanger" type="button">
+      <img class="px" src="assets/icones/icon_talents.png" alt="">
+      Mélanger les mineurs
+    </button>
   </div>
 </section>
 
@@ -629,7 +701,7 @@
   </div>
 </div>
 
-<section class="systemes nav-arret" data-depth="1800" data-nav="Systèmes">
+<section class="systemes nav-arret" data-depth="1800" data-nav="Systèmes" data-roche="var(--roche-pierre)">
   <div class="conteneur">
     <h2>Tout ce qu'il y a dans la mine</h2>
     <p class="intro">La liste complète, sans filtre marketing — ce qui est vraiment dans le jeu.</p>
@@ -694,7 +766,7 @@
   </div>
 </section>
 
-<section class="galerie nav-arret" id="galerie" data-depth="2200" data-nav="Galerie">
+<section class="galerie nav-arret" id="galerie" data-depth="2200" data-nav="Galerie" data-roche="var(--roche-granite)">
   <div class="conteneur">
     <h2>Un monde à creuser</h2>
     <div class="grille-galerie">
@@ -706,7 +778,7 @@
   </div>
 </section>
 
-<section class="cta-finale nav-arret" id="cta" data-depth="2600" data-nav="Sortie">
+<section class="cta-finale nav-arret" id="cta" data-depth="2600" data-nav="Sortie" data-roche="var(--roche-volcan)">
   <h2>Ta pioche t'attend.</h2>
   <p>Underhearth arrive bientôt, encore en développement. Laisse-nous un mot
   pour être prévenu dès que la page officielle (Steam) sera en ligne.</p>
@@ -726,11 +798,9 @@
 </div>
 
 <script>
-// Rail de profondeur : jauge + numero qui suivent le defilement, arrets
-// cliquables genre coupe geologique — la navigation EST la descente.
-// TOUTES les sections (pas seulement les 4 "strates" narratives) sont des
-// arrets : avec autant de contenu a parcourir, la navigation doit permettre
-// de sauter direct a "Systemes" ou "Galerie" sans tout re-scroller a la main.
+// ============================================================
+// Rail de profondeur : jauge + wagonnet + arrets cliquables.
+// ============================================================
 const strates = document.querySelectorAll('.nav-arret');
 const arretsConteneur = document.getElementById('arrets');
 const jauge = document.getElementById('jaugeRemplie');
@@ -766,19 +836,95 @@ function maj(){
 window.addEventListener('scroll', maj);
 maj();
 
-// --- "Creuse pour continuer" : une bande cliquable entre chaque section,
-// AJOUTEE apres coup (le HTML de base n'en a pas) — donc si ce script
-// echoue, il n'y a simplement pas de bande, et le scroll normal (molette,
-// barre, tactile, historique) n'est jamais touche : rien ici n'intercepte
-// wheel/touch, seul un clic/tap explicite sur la petite bande agit.
+// ============================================================
+// La paroi du hero : poches de cristal + poussiere lumineuse,
+// posees par le script pour varier les positions a chaque visite.
+// ============================================================
+const paroi = document.getElementById('paroi');
+const hero = document.querySelector('.hero');
+const GEMMES = [
+  ['assets/icones/icon_crystal.png', '#7dd8ff'],
+  ['assets/icones/icon_emerald.png', '#7dff9e'],
+  ['assets/icones/icon_amethyst.png', '#c99bff'],
+  ['assets/icones/icon_gold.png', '#ffd23c'],
+  ['assets/icones/icon_diamond.png', '#dff3ff'],
+];
+for (let i = 0; i < 9; i++) {
+  const [src, teinte] = GEMMES[i % GEMMES.length];
+  const g = document.createElement('img');
+  g.className = 'gemme-paroi px';
+  g.src = src; g.alt = '';
+  g.style.color = teinte;
+  // Sur les bords, jamais au centre : le centre appartient au logo.
+  const gauche = Math.random() < 0.5;
+  g.style.left = gauche ? (3 + Math.random() * 16) + '%' : (81 + Math.random() * 15) + '%';
+  g.style.top = (8 + Math.random() * 62) + '%';
+  g.style.animationDelay = (-Math.random() * 2.8) + 's';
+  hero.appendChild(g);
+}
+for (let i = 0; i < 14; i++) {
+  const p = document.createElement('div');
+  p.className = 'poussiere';
+  p.style.left = (2 + Math.random() * 96) + '%';
+  p.style.bottom = (10 + Math.random() * 30) + '%';
+  p.style.animationDuration = (5 + Math.random() * 7) + 's';
+  p.style.animationDelay = (-Math.random() * 9) + 's';
+  hero.appendChild(p);
+}
+
+// ============================================================
+// Le createur : six mineurs tires au sort parmi les vrais calques
+// du jeu, et un bouton pour remelanger — les 87 480 combinaisons
+// deviennent un jouet.
+// ============================================================
+const CALQUES = {
+  body:  ['body_brown','body_dark','body_light'],
+  pants: ['pants_black','pants_blue_light','pants_brown','pants_green_light','pants_white'],
+  shoes: ['shoes_black','shoes_brown','shoes_orange','shoes_white'],
+  shirt: ['shirt_blue_light','shirt_green_light','shirt_orange','shirt_red','shirt_yellow'],
+  hair:  ['hair_big_bun_purple','hair_pony_tail_pink','hair_short_hair_black','hair_short_hair_white','hair_spikey_blonde'],
+};
+const grillePerso = document.getElementById('grillePerso');
+const tire = (liste) => liste[Math.floor(Math.random() * liste.length)];
+
+function batirMineur(){
+  const perso = document.createElement('div');
+  perso.className = 'perso';
+  for (const famille of ['body','pants','shoes','shirt','hair']) {
+    const calque = document.createElement('div');
+    calque.className = 'calque';
+    calque.style.backgroundImage = `url('assets/perso/${tire(CALQUES[famille])}.png')`;
+    perso.appendChild(calque);
+  }
+  return perso;
+}
+function melanger(){
+  grillePerso.replaceChildren();
+  for (let i = 0; i < 6; i++) grillePerso.appendChild(batirMineur());
+}
+melanger();
+document.getElementById('melanger').addEventListener('click', () => {
+  melanger();
+  // Un petit eclat de pierre sur le bouton, comme un coup de pioche.
+  const bouton = document.getElementById('melanger');
+  bouton.animate([{transform:'scale(.94)'},{transform:'scale(1)'}], {duration:180, easing:'ease-out'});
+});
+
+// ============================================================
+// "Creuse pour continuer" : bande cliquable entre les sections —
+// un AJOUT au scroll normal, jamais un remplacement. La bande
+// prend la teinte de la ROCHE de la section suivante : on voit ce
+// qu'on va traverser.
+// ============================================================
 const listeStrates = Array.from(strates);
 listeStrates.forEach((s, i) => {
-  if (i === listeStrates.length - 1) return; // derniere section : rien apres
+  if (i === listeStrates.length - 1) return;
   const suivante = listeStrates[i + 1];
   const zone = document.createElement('div');
   zone.className = 'zone-creuse';
   zone.setAttribute('role', 'button');
   zone.setAttribute('aria-label', `Continuer vers ${suivante.dataset.nav}`);
+  if (suivante.dataset.roche) zone.style.setProperty('--roche', suivante.dataset.roche);
   zone.innerHTML = '<span class="texte-creuse pixel">▼ Creuse pour continuer ▼</span>';
   zone.addEventListener('click', (e) => {
     const r = zone.getBoundingClientRect();
